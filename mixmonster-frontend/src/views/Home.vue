@@ -1,18 +1,33 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
+  <hello-world />
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import HelloWorld from '../components/HelloWorld.vue';
+import { GetCollections } from '@/types/generated/graphql';
 
 @Component({
   components: {
     HelloWorld,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  name = 'Home';
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async mounted() {
+    console.log(this.name);
+    const client = new ApolloClient({
+      uri: 'http://localhost:4000/graphql',
+      cache: new InMemoryCache(),
+    });
+
+    const requestCollections = await client.query({ query: GetCollections });
+
+    console.log(requestCollections);
+  }
+}
 </script>

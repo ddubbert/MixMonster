@@ -2,12 +2,15 @@ import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-
 import { Plugin } from '@envelop/types';
 import axios from 'axios';
 import { UserType, Context } from '../types/basic';
+import * as util from 'util'
 const keycloak = require('../../keycloak.json');
 
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   try {
     // @ts-ignore
     const token = context.req.headers.authorization;
+    // @ts-ignore
+    if(context.operation.name.value === 'IntrospectionQuery') return { id: 'introspection', authId: 'introspection' };
     if (!token) throw Error('No authorization provided');
     const url = `${keycloak['auth-server-url']}realms/${keycloak.realm}/protocol/openid-connect/userinfo`;
     const config = {
