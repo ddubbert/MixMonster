@@ -3,15 +3,18 @@ import { Plugin } from '@envelop/types';
 import axios from 'axios';
 import { UserType, Context } from '../types/basic';
 import * as util from 'util'
+
 const keycloak = require('../../keycloak.json');
 
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   try {
+    console.log(util.inspect(context.req));
     // @ts-ignore
     const token = context.req.headers.authorization;
     // @ts-ignore
-    if(context.operation.name.value === 'IntrospectionQuery') return { id: 'introspection', authId: 'introspection' };
-    if (!token) throw Error('No authorization provided');
+    if(context.operation.name?.value === 'IntrospectionQuery') return { id: 'introspection', authId: 'introspection' };
+    if (!token) return null;
+
     const url = `${keycloak['auth-server-url']}realms/${keycloak.realm}/protocol/openid-connect/userinfo`;
     const config = {
       headers: {
@@ -34,6 +37,7 @@ const resolveUserFn: ResolveUserFn<UserType> = async context => {
 };
 
 const validateUser: ValidateUserFn<UserType> = async (user, context) => {
+  console.log(user);
   if (!user) {
     throw new Error(`Unauthenticated!`);
   }
