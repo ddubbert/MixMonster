@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import HelloWorld from '../components/HelloWorld.vue';
 import { GetCollections } from '@/types/generated/graphql';
 
@@ -20,14 +20,24 @@ export default class Home extends Vue {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async mounted() {
     console.log(this.name);
-    const client = new ApolloClient({
+    console.log(this.$keycloak);
+
+    const link = createHttpLink({
       uri: 'http://localhost:4000/graphql',
-      cache: new InMemoryCache(),
+      headers: {
+        authorization: `Bearer ${this.$keycloak.token}`,
+      },
+    });
+    const cache = new InMemoryCache();
+
+    const client = new ApolloClient({
+      link,
+      cache,
     });
 
     const requestCollections = await client.query({ query: GetCollections });
 
-    console.log(requestCollections);
+    console.log(requestCollections.data.getCollections);
   }
 }
 </script>

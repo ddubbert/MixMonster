@@ -1,22 +1,22 @@
 require('dotenv').config();
 import fastify from "fastify";
+import cors from "fastify-cors";
 import {
   getGraphQLParameters,
   processRequest,
   renderGraphiQL,
   shouldRenderGraphiQL,
 } from "graphql-helix";
-import { envelop, useLogger, useSchema, useTiming } from "@envelop/core";
+import { envelop, useSchema } from "@envelop/core";
 import { keycloakAuth} from './utils/auth';
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import resolvers from "./resolvers/resolvers";
-import { DIRECTIVES } from "@graphql-codegen/typescript-mongodb";
 import typeDefs from "./schemas/schema";
-import { connectDB } from './db'
+import { connectDB } from './db';
 
 const start = async () => {
   const schema = makeExecutableSchema({
-    typeDefs: [DIRECTIVES, typeDefs],
+    typeDefs,
     resolvers,
   });
 
@@ -25,6 +25,7 @@ const start = async () => {
   });
 
   const app = fastify();
+  app.register(cors, {});
 
   const db = await connectDB();
 
@@ -63,7 +64,7 @@ const start = async () => {
         } else {
           // You can find a complete example with GraphQL Subscriptions and stream/defer here:
           // https://github.com/contrawork/graphql-helix/blob/master/examples/fastify/server.ts
-          res.send({ errors: [{ message: 'Not Supported in this demo' }] });
+          res.send({errors: [{message: 'Not Supported in this demo'}]});
         }
       }
     },
