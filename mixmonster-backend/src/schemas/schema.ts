@@ -1,43 +1,4 @@
 export default /* GraphQL */`
-#    directive @entity(additionalFields: [AdditionalEntityFields], embedded: Boolean) on OBJECT
-#    directive @column(overrideType: String) on FIELD_DEFINITION
-#    directive @id on FIELD_DEFINITION
-#    directive @link on FIELD_DEFINITION
-#    directive @embedded on FIELD_DEFINITION
-#    directive @map(path: String) on FIELD_DEFINITION
-#    directive @abstractEntity(additionalFields: [AdditionalEntityFields], discriminatorField: String!) on INTERFACE
-#    directive @union(discriminatorField: String) on UNION
-#
-#    input AdditionalEntityFields {
-#        path: String!
-#        type: String!
-#    }
-
-#    type User @entity(additionalFields: [{ path: "token", type: "string" }]) {
-#        id: String @id
-#        collections: [Collection] @link
-#    }
-#
-#    type Collection @entity {
-#        id: String! @id
-#        title: String! @column
-#        categories: [Category] @embedded
-#    }
-#
-#    type Category @entity(embedded: true) {
-#        title: String! @column
-#        selectable: Boolean! @column
-#        expressions: [Expression] @embedded
-#    }
-#
-#    type Expression @entity(embedded: true) {
-#        title: String! @column
-#        image: String @column
-#    }
-#
-#    type Query {
-#        getUser: User!
-#    }
     type User {
         id: String!
     }
@@ -46,14 +7,14 @@ export default /* GraphQL */`
         id: String!
         title: String!
         allowReRoll: Boolean!
-        categories: [Category]
+        categories: [Category!]!
     }
     
     type Category {
         title: String!
         selectable: Boolean!
         criteriaRollAmount: Int!
-        criteria: [Criteria]
+        criteria: [Criteria!]!
     }
     
     type Criteria {
@@ -64,13 +25,14 @@ export default /* GraphQL */`
     input CollectionInput {
         title: String!
         allowReRoll: Boolean = true
-        categories: [CategoryInput]
+        categories: [CategoryInput!] = []
     }
 
     input CategoryInput {
         title: String!
         selectable: Boolean = true
         criteriaRollAmount: Int = 1
+        criteria: [CriteriaInput!] = []
     }
     
     input CriteriaInput {
@@ -80,9 +42,9 @@ export default /* GraphQL */`
     
     type Query {
         getUser: User!
-        getUsers: [User]
+        getUsers: [User!]!
         getCollection(id: String!): Collection!
-        getCollections: [Collection]
+        getCollections: [Collection!]!
     }
 
     type Mutation {

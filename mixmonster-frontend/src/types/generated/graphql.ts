@@ -12,20 +12,16 @@ export type Scalars = {
   Float: number;
 };
 
-export type AdditionalEntityFields = {
-  path?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
-};
-
 export type Category = {
   __typename?: 'Category';
-  criteria?: Maybe<Array<Maybe<Criteria>>>;
+  criteria: Array<Criteria>;
   criteriaRollAmount: Scalars['Int'];
   selectable: Scalars['Boolean'];
   title: Scalars['String'];
 };
 
 export type CategoryInput = {
+  criteria?: Maybe<Array<CriteriaInput>>;
   criteriaRollAmount?: Maybe<Scalars['Int']>;
   selectable?: Maybe<Scalars['Boolean']>;
   title: Scalars['String'];
@@ -34,14 +30,14 @@ export type CategoryInput = {
 export type Collection = {
   __typename?: 'Collection';
   allowReRoll: Scalars['Boolean'];
-  categories?: Maybe<Array<Maybe<Category>>>;
+  categories: Array<Category>;
   id: Scalars['String'];
   title: Scalars['String'];
 };
 
 export type CollectionInput = {
   allowReRoll?: Maybe<Scalars['Boolean']>;
-  categories?: Maybe<Array<Maybe<CategoryInput>>>;
+  categories?: Maybe<Array<CategoryInput>>;
   title: Scalars['String'];
 };
 
@@ -84,9 +80,9 @@ export type MutationUpdateCollectionArgs = {
 export type Query = {
   __typename?: 'Query';
   getCollection: Collection;
-  getCollections?: Maybe<Array<Maybe<Collection>>>;
+  getCollections: Array<Collection>;
   getUser: User;
-  getUsers?: Maybe<Array<Maybe<User>>>;
+  getUsers: Array<User>;
 };
 
 
@@ -99,20 +95,62 @@ export type User = {
   id: Scalars['String'];
 };
 
+export type CollectionDataFragment = { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> };
+
 export type GetCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCollectionsQuery = { __typename?: 'Query', getCollections?: Array<{ __typename?: 'Collection', id: string, title: string, categories?: Array<{ __typename?: 'Category', title: string } | null | undefined> | null | undefined } | null | undefined> | null | undefined };
+export type GetCollectionsQuery = { __typename?: 'Query', getCollections: Array<{ __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> }> };
+
+export type CreateCollectionMutationVariables = Exact<{
+  input: CollectionInput;
+}>;
 
 
-export const GetCollections = gql`
-    query getCollections {
-  getCollections {
-    id
+export type CreateCollectionMutation = { __typename?: 'Mutation', createCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> } };
+
+export type UpdateCollectionMutationVariables = Exact<{
+  id: Scalars['String'];
+  update: CollectionInput;
+}>;
+
+
+export type UpdateCollectionMutation = { __typename?: 'Mutation', updateCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> } };
+
+export const CollectionData = gql`
+    fragment collectionData on Collection {
+  id
+  title
+  allowReRoll
+  categories {
     title
-    categories {
+    selectable
+    criteriaRollAmount
+    criteria {
       title
+      image
     }
   }
 }
     `;
+export const GetCollections = gql`
+    query getCollections {
+  getCollections {
+    ...collectionData
+  }
+}
+    ${CollectionData}`;
+export const CreateCollection = gql`
+    mutation createCollection($input: CollectionInput!) {
+  createCollection(input: $input) {
+    ...collectionData
+  }
+}
+    ${CollectionData}`;
+export const UpdateCollection = gql`
+    mutation updateCollection($id: String!, $update: CollectionInput!) {
+  updateCollection(id: $id, update: $update) {
+    ...collectionData
+  }
+}
+    ${CollectionData}`;

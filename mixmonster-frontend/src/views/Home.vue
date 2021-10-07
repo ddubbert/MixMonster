@@ -19,9 +19,6 @@ export default class Home extends Vue {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async mounted() {
-    console.log(this.name);
-    console.log(this.$keycloak);
-
     const link = createHttpLink({
       uri: 'http://localhost:4000/graphql',
       headers: {
