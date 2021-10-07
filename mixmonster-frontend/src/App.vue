@@ -2,38 +2,38 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
+      color="secondary"
       dark
     >
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Logo"
+          alt="MixMonster Logo"
           class="shrink mr-2"
           contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          src="@/assets/icon.png"
           transition="scale-transition"
-          width="40"
+          width="50"
         />
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+        <v-toolbar-title><strong class='appTitle'>MixMonster</strong></v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+        to='/collections'
+        icon
+        class='ml-2 mr-2'
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+        <v-icon x-large>mdi-view-list</v-icon>
+      </v-btn>
+
+      <v-btn
+        to='/login'
+        icon
+        class='ml-2 mr-2'
+      >
+        <v-icon x-large>mdi-account-circle</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -45,12 +45,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Component from 'vue-class-component';
 
-export default Vue.extend({
-  name: 'App',
-
-  data: () => ({
-    //
-  }),
-});
+@Component
+export default class App extends Vue {
+}
 </script>
+
+<style>
+.appTitle {
+  font-size: 3rem;
+}
+
+.myHeading {
+  font-size: 2.5rem;
+}
+</style>

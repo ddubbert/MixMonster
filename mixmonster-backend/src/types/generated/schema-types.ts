@@ -17,13 +17,14 @@ export type Scalars = {
 
 export type Category = {
   __typename?: 'Category';
-  criteria?: Maybe<Array<Maybe<Criteria>>>;
+  criteria: Array<Criteria>;
   criteriaRollAmount: Scalars['Int'];
   selectable: Scalars['Boolean'];
   title: Scalars['String'];
 };
 
 export type CategoryInput = {
+  criteria?: Maybe<Array<CriteriaInput>>;
   criteriaRollAmount?: Maybe<Scalars['Int']>;
   selectable?: Maybe<Scalars['Boolean']>;
   title: Scalars['String'];
@@ -32,14 +33,14 @@ export type CategoryInput = {
 export type Collection = {
   __typename?: 'Collection';
   allowReRoll: Scalars['Boolean'];
-  categories?: Maybe<Array<Maybe<Category>>>;
+  categories: Array<Category>;
   id: Scalars['String'];
   title: Scalars['String'];
 };
 
 export type CollectionInput = {
   allowReRoll?: Maybe<Scalars['Boolean']>;
-  categories?: Maybe<Array<Maybe<CategoryInput>>>;
+  categories?: Maybe<Array<CategoryInput>>;
   title: Scalars['String'];
 };
 
@@ -82,9 +83,9 @@ export type MutationUpdateCollectionArgs = {
 export type Query = {
   __typename?: 'Query';
   getCollection: Collection;
-  getCollections?: Maybe<Array<Maybe<Collection>>>;
+  getCollections: Array<Collection>;
   getUser: User;
-  getUsers?: Maybe<Array<Maybe<User>>>;
+  getUsers: Array<User>;
 };
 
 
@@ -197,7 +198,7 @@ export type ResolversParentTypes = {
 };
 
 export type CategoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
-  criteria?: Resolver<Maybe<Array<Maybe<ResolversTypes['Criteria']>>>, ParentType, ContextType>;
+  criteria?: Resolver<Array<ResolversTypes['Criteria']>, ParentType, ContextType>;
   criteriaRollAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   selectable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -206,7 +207,7 @@ export type CategoryResolvers<ContextType = Context, ParentType extends Resolver
 
 export type CollectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = {
   allowReRoll?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType>;
+  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -228,9 +229,9 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<QueryGetCollectionArgs, 'id'>>;
-  getCollections?: Resolver<Maybe<Array<Maybe<ResolversTypes['Collection']>>>, ParentType, ContextType>;
+  getCollections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType>;
   getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  getUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
