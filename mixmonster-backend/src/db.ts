@@ -1,10 +1,8 @@
 import { connect } from 'mongoose';
-import { UserModel, DBUser } from './models/user';
 import { CollectionModel, DBCollection } from './models/collection';
 import { Model } from 'mongoose'
 
 export interface DB {
-  User: Model<DBUser>,
   Collection: Model<DBCollection>,
 }
 
@@ -18,7 +16,6 @@ export async function connectDB(): Promise<DB> {
   }
 
   return {
-    User: UserModel,
     Collection: CollectionModel,
   };
 }

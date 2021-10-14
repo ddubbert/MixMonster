@@ -31,4 +31,8 @@ export default /* GraphQL */`
       ...collectionData
     }
   }
+
+  mutation deleteCollection($id: String!) {
+    deleteCollection(id: $id)
+  }
 `;

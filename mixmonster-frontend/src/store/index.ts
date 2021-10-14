@@ -2,11 +2,12 @@ import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 import Keycloak from 'keycloak-js';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import {
   Collection,
   CreateCollection,
   CreateCollectionMutation,
-  CreateCollectionMutationVariables,
+  CreateCollectionMutationVariables, DeleteCollection, DeleteCollectionMutation,
   GetCollections,
   GetCollectionsQuery,
   UpdateCollection,
@@ -17,43 +18,48 @@ import {
 Vue.use(Vuex);
 
 export default function createStore(keycloak: Keycloak.KeycloakInstance):
-  Store<{ collections: Collection[]; counter: number }> {
+  Store<{ collections: Collection[] }> {
   const link = createHttpLink({
     uri: 'http://localhost:4000/graphql',
-    headers: {
-      authorization: `Bearer ${keycloak.token}`,
-    },
+  });
+
+  const authLink = setContext((_, { headers }) => {
+    const { token } = keycloak;
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    };
   });
 
   const cache = new InMemoryCache();
 
   const apolloClient = new ApolloClient({
-    link,
+    link: authLink.concat(link),
     cache,
   });
 
   return new Vuex.Store({
     state: {
       collections: [] as Collection[],
-      counter: 2,
     },
     getters: {
-      getCollection: (state) => (collectionId: string): Collection | undefined => state
+      getCollections: (state) => (collectionId: string): Collection | undefined => state
         .collections.find((collection) => collection.id === collectionId),
     },
     mutations: {
       addCollection(state, collection: Collection) {
         state.collections.push(collection);
-        state.counter += 1;
       },
       updateCollection(state, collection: Collection) {
         const index = state.collections.map((x) => x.id)
           .indexOf(collection.id);
         Vue.set(state.collections, index, collection);
       },
-      deleteCollection(state, collection: Collection) {
+      deleteCollection(state, id: string) {
         const index = state.collections.map((x) => x.id)
-          .indexOf(collection.id);
+          .indexOf(id);
         state.collections.splice(index, 1);
       },
     },
@@ -63,13 +69,10 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           .query<GetCollectionsQuery>({ query: GetCollections })).data.getCollections;
         state.collections.splice(0, state.collections.length, ...requestedCollections);
       },
-      async createCollection({
-        commit,
-      }, collection: Collection) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, ...input } = collection;
-        const variables : CreateCollectionMutationVariables = { input };
-
+      async createCollection(
+        { commit },
+        variables: CreateCollectionMutationVariables,
+      ) {
         const createdCollection = (await apolloClient
           .mutate<CreateCollectionMutation>({
             mutation: CreateCollection,
@@ -80,10 +83,10 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           commit('addCollection', createdCollection);
         }
       },
-      async updateCollection({ commit }, collection: Collection) {
-        const { id, ...update } = collection;
-        const variables : UpdateCollectionMutationVariables = { id, update };
-
+      async updateCollection(
+        { commit },
+        variables: UpdateCollectionMutationVariables,
+      ) {
         const updatedCollection = (await apolloClient
           .mutate<UpdateCollectionMutation>({
             mutation: UpdateCollection,
@@ -94,9 +97,14 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           commit('updateCollection', updatedCollection);
         }
       },
-      async removeCollection({ commit }, collection: Collection) {
-        // Todo
-        commit('deleteCollection', collection);
+      async removeCollection({ commit }, id: string) {
+        const deletedCollection = (await apolloClient
+          .mutate<DeleteCollectionMutation>({
+            mutation: DeleteCollection,
+            variables: { id },
+          })).data?.deleteCollection;
+
+        if (deletedCollection) commit('deleteCollection', id);
       },
     },
     modules: {},

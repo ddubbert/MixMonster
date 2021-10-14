@@ -34,6 +34,12 @@ const routes: Array<RouteConfig> = [
     name: 'CreateCollection',
     component: () => import(/* webpackChunkName: "about" */ '../views/CreateCollection.vue'),
   },
+  {
+    path: '/collections/preview/:collectionId',
+    name: 'PreviewCollection',
+    component: () => import(/* webpackChunkName: "about" */ '../views/PreviewCollection.vue'),
+    props: true,
+  },
 ];
 
 const router = new VueRouter({

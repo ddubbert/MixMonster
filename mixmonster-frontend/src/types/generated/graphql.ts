@@ -117,6 +117,13 @@ export type UpdateCollectionMutationVariables = Exact<{
 
 export type UpdateCollectionMutation = { __typename?: 'Mutation', updateCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> } };
 
+export type DeleteCollectionMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteCollectionMutation = { __typename?: 'Mutation', deleteCollection: boolean };
+
 export const CollectionData = gql`
     fragment collectionData on Collection {
   id
@@ -154,3 +161,8 @@ export const UpdateCollection = gql`
   }
 }
     ${CollectionData}`;
+export const DeleteCollection = gql`
+    mutation deleteCollection($id: String!) {
+  deleteCollection(id: $id)
+}
+    `;

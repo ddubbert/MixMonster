@@ -1,8 +1,8 @@
 import { ExecutionContext } from 'graphql-helix/dist/types'
 import { DB } from '../db';
 
+// TODO
 export type UserType = {
-  authId: string;
   id: string;
 };
 

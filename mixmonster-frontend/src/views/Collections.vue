@@ -15,7 +15,7 @@
           <v-col xs='12' sm='10' md='8'>
             <v-card class="elevation-2" @click.stop='edit(index)'>
               <v-toolbar dark color="primary">
-                <v-toolbar-title><strong>{{collection.title}}</strong></v-toolbar-title>
+                <v-toolbar-title><strong>{{ collection.title }}</strong></v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
@@ -80,7 +80,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      @click='download(index)'
+                      @click.stop='download(index)'
                       icon
                       class='ml-1 mr-1'
                       v-bind="attrs"
@@ -95,7 +95,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      @click='remove(index)'
+                      @click.stop='remove(index)'
                       icon
                       class='ml-1 mr-1'
                       v-bind="attrs"
@@ -115,7 +115,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                to='/collections/create'
+                @click.stop="$router.push({ name: 'CreateCollection' })"
                 fab
                 color='primary'
                 class='ma-3'
@@ -140,7 +140,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
-                @click='$refs.upload.click()'
+                @click.stop='$refs.upload.click()'
                 fab
                 color='primary'
                 class='ma-3'
@@ -163,8 +163,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { mapGetters, mapActions } from 'vuex';
 import { Collection } from '@/types/generated/graphql';
-import CSVManager from '@/models/CSVManager';
+import CSVManager from '@/utils/CSVManager';
+import { getValidCreate } from '@/utils/InputCreator';
 
 @Component
 export default class Collections extends Vue {
@@ -173,7 +175,7 @@ export default class Collections extends Vue {
   }
 
   duplicate(index: number): void {
-    this.$store.dispatch('createCollection', this.collections[index]);
+    this.$store.dispatch('createCollection', getValidCreate(this.collections[index]));
   }
 
   preview(index: number): void {
@@ -238,6 +240,44 @@ export default class Collections extends Vue {
         };
         fileReader.readAsText(target.files[0]);
       }
+    }
+  }
+
+  mounted(): void {
+    if (!this.$keycloak.token) {
+      this.$keycloak.init({
+        onLoad: 'login-required',
+        redirectUri: 'http://localhost:8080/collections',
+      }).then((auth) => {
+        if (!auth) {
+          window.location.reload();
+        } else {
+          this.$store.dispatch('getCollections');
+        }
+
+        // Token Refresh
+        setInterval(() => {
+          this.$keycloak.updateToken(70).then((refreshed) => {
+            if (refreshed) {
+              console.log(`Token refreshed ${refreshed}`);
+            } else if (this.$keycloak.tokenParsed?.exp && this.$keycloak.timeSkew) {
+              console.warn(`Token still valid for ${
+                Math.round(
+                  this.$keycloak.tokenParsed.exp
+                  + this.$keycloak.timeSkew
+                  - new Date().getTime()
+                  / 1000,
+                )
+              } seconds`);
+            }
+          }).catch(() => {
+            console.error('Failed to refresh token');
+          });
+        }, 6000);
+      }).catch((e) => {
+        console.log(e);
+        console.error('Authenticated Failed');
+      });
     }
   }
 }

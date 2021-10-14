@@ -14,6 +14,186 @@
     <v-row
       align='center'
       justify='center'
+    >
+      <v-col xs='12' sm='10' md='8'>
+        <v-expansion-panels multiple>
+          <v-expansion-panel
+            v-for='(category, categoryIndex) in collection.categories'
+            :key='`category${categoryIndex}`'
+            class='mt-2 mb-2'
+          >
+            <v-expansion-panel-header color='primary'>
+              <template v-slot:actions>
+                <v-icon x-large color='white'>mdi-menu-down</v-icon>
+              </template>
+
+              <span class='text-h6 white--text'><strong>{{ category.title }}</strong></span>
+            </v-expansion-panel-header>
+
+            <v-expansion-panel-content
+              :style="{
+                border: `5px solid ${primary}`,
+                ['border-bottom-left-radius']: 'inherit',
+                ['border-bottom-right-radius']: 'inherit',
+              }"
+            >
+              <v-row class='mt-2' align='center' justify='start'>
+                <v-col>
+                  <v-text-field
+                    v-model='category.title'
+                    label='Kategoriename'
+                  >
+                  </v-text-field>
+                </v-col>
+
+                <v-col>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='deleteCategory(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                        color='error'
+                        x-large
+                      >
+                        <v-icon x-large>mdi-delete-forever</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Kategorie löschen</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+
+              <v-row
+                align='center'
+                justify='start'
+                class='ma-2'
+              >
+                <v-col
+                  v-for='(criteria, criteriaIndex) in category.criteria'
+                  :key='`criteria${criteriaIndex}`'
+                  xs='12'
+                  sm='6'
+                  md='6'
+                  lg='4'
+                  class='pa-0'
+                >
+                  <v-card class='ma-2'>
+                    <v-alert
+                      outlined
+                      color='accent'
+                      style='border-width: 2px !important;'
+                    >
+                      <v-row
+                        align='center'
+                        justify='start'
+                        class='ma-1'
+                      >
+                        <v-text-field
+                          v-model='criteria.title'
+                          label='Kriterium'
+                        >
+                        </v-text-field>
+                      </v-row>
+
+                      <v-row
+                        align='center'
+                        justify='start'
+                        class='ma-1'
+                      >
+                        <v-text-field
+                          v-model='criteria.image'
+                          label='Bild URL'
+                          prepend-icon='mdi-camera'
+                        >
+                        </v-text-field>
+                      </v-row>
+
+                      <v-row
+                        align='center'
+                        justify='center'
+                        class='ma-1  mb-3'
+                      >
+                        <v-card v-if='criteria.image'>
+                          <v-img
+                            contain
+                            :width='imageSize'
+                            :height='imageSize'
+                            :src='criteria.image'
+                          ></v-img>
+                        </v-card>
+                      </v-row>
+                      <v-row
+                        align='center'
+                        justify='center'
+                        class='ma-1'
+                      >
+                        <v-tooltip top v-if='criteria.image'>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              @click='removeImage(index, criteriaIndex)'
+                              icon
+                              class='ml-1 mr-1'
+                              v-bind="attrs"
+                              v-on="on"
+                              color='error'
+                            >
+                              <v-icon>mdi-camera-off</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Bild entfernen</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              @click='deleteCriteria(index, criteriaIndex)'
+                              icon
+                              class='ml-1 mr-1'
+                              v-bind="attrs"
+                              v-on="on"
+                              color='error'
+                            >
+                              <v-icon large>mdi-delete-forever</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Löschen</span>
+                        </v-tooltip>
+                      </v-row>
+                    </v-alert>
+                  </v-card>
+                </v-col>
+              </v-row>
+
+              <v-row class='ma-2' justify='center' align='center'>
+                <v-spacer></v-spacer>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      @click='addCriteria(index)'
+                      color='accent'
+                      class='ma-1'
+                      large
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-icon large>mdi-plus-circle</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Kriterium hinzufügen</span>
+                </v-tooltip>
+                <v-spacer></v-spacer>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-row>
+
+    <v-row
+      align='center'
+      justify='center'
       v-for='(category, index) in collection.categories'
       :key='index'
     >
@@ -198,7 +378,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Collection, Criteria } from '@/types/generated/graphql';
+import { Collection } from '@/types/generated/graphql';
 
 const EditorProps = Vue.extend({
   props: {
@@ -211,7 +391,20 @@ const EditorProps = Vue.extend({
 
 @Component
 export default class CollectionEditor extends EditorProps {
-  collection = this.initialCollection;
+  categoryTemplate = {
+    title: 'Kategorie',
+    selectable: true,
+    criteriaRollAmount: 1,
+    criteria: [
+      {
+        title: 'Kriterium',
+      },
+    ],
+  };
+
+  primary = this.$vuetify.theme.themes.dark.primary;
+
+  collection: Collection = JSON.parse(JSON.stringify(this.initialCollection));
 
   get imageSize(): number {
     switch (this.$vuetify.breakpoint.name) {
@@ -225,14 +418,7 @@ export default class CollectionEditor extends EditorProps {
   }
 
   addCategory(): void {
-    this.collection.categories.push({
-      title: 'Kategoriename',
-      selectable: true,
-      criteriaRollAmount: 1,
-      criteria: [{
-        title: 'Kriterium',
-      }] as Criteria[],
-    });
+    this.collection.categories.push({ ...this.categoryTemplate });
   }
 
   deleteCategory(categoryIndex: number): void {

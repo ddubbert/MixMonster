@@ -1,40 +1,78 @@
 <template>
-  <hello-world />
+  <v-app>
+    <v-main>
+      <v-container>
+        <v-row align='center' justify='center' class='mb-16'>
+          <strong class='appTitle'>Willkommen beim MixMonster!</strong>
+        </v-row>
+
+        <v-row align='center' justify='center'>
+          <v-col xl='4' lg='4' md='6' sm='8' xs='12'  class='pa-5'>
+            <v-row align='center' justify='center' class='mb-10 mt-10'>
+              <strong class='mySubtitle'>Du kannst</strong>
+            </v-row>
+
+            <v-row align='center' justify='center' class='mb-14'>
+              <v-btn
+                to='collections'
+                class='ml-1 mr-1'
+                color='primary'
+                x-large
+              >
+                Zur MixMonster Verwaltung
+              </v-btn>
+            </v-row>
+
+            <v-row align='center' justify='center'>
+              <strong class='mySubtitle'>oder</strong>
+            </v-row>
+
+            <v-row align='center' justify='center' class='mt-16'>
+              <v-col>
+                <v-row align='center' justify='center'>
+                  <v-text-field
+                    v-model="id"
+                    outlined
+                    clearable
+                    label="Referenznummer des MixMonsters"
+                    type="text"
+                  ></v-text-field>
+                </v-row>
+                <v-row align='center' justify='center'>
+                  <v-btn
+                    @click.stop='useCollection'
+                    class='ml-1 mr-1'
+                    color='primary'
+                    x-large
+                  >
+                    Ein MixMonster nutzen
+                  </v-btn>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
-import HelloWorld from '../components/HelloWorld.vue';
-import { GetCollections } from '@/types/generated/graphql';
+import 'vue-class-component/hooks';
 
-@Component({
-  components: {
-    HelloWorld,
-  },
-})
+@Component
 export default class Home extends Vue {
   name = 'Home';
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async mounted() {
-    const link = createHttpLink({
-      uri: 'http://localhost:4000/graphql',
-      headers: {
-        authorization: `Bearer ${this.$keycloak.token}`,
-      },
-    });
-    const cache = new InMemoryCache();
+  id = '';
 
-    const client = new ApolloClient({
-      link,
-      cache,
-    });
-
-    const requestCollections = await client.query({ query: GetCollections });
-
-    console.log(requestCollections.data.getCollections);
+  useCollection(): void {
+    console.log(this.id);
+    // this.$router.push({
+    //   name: 'Pre',
+    // });
   }
 }
 </script>

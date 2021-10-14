@@ -1,8 +1,4 @@
 export default /* GraphQL */`
-    type User {
-        id: String!
-    }
-    
     type Collection {
         id: String!
         title: String!
@@ -41,14 +37,11 @@ export default /* GraphQL */`
     }
     
     type Query {
-        getUser: User!
-        getUsers: [User!]!
         getCollection(id: String!): Collection!
         getCollections: [Collection!]!
     }
 
     type Mutation {
-        deleteUsers: Boolean!
         createCollection(input: CollectionInput!): Collection!
         updateCollection(id: String!, update: CollectionInput!): Collection!
         deleteCollection(id: String!): Boolean!

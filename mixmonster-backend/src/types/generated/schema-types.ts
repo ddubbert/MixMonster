@@ -60,7 +60,6 @@ export type Mutation = {
   createCollection: Collection;
   deleteAllCollections: Scalars['Boolean'];
   deleteCollection: Scalars['Boolean'];
-  deleteUsers: Scalars['Boolean'];
   updateCollection: Collection;
 };
 
@@ -84,17 +83,10 @@ export type Query = {
   __typename?: 'Query';
   getCollection: Collection;
   getCollections: Array<Collection>;
-  getUser: User;
-  getUsers: Array<User>;
 };
 
 
 export type QueryGetCollectionArgs = {
-  id: Scalars['String'];
-};
-
-export type User = {
-  __typename?: 'User';
   id: Scalars['String'];
 };
 
@@ -178,7 +170,6 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -194,7 +185,6 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   String: Scalars['String'];
-  User: User;
 };
 
 export type CategoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
@@ -223,20 +213,12 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationCreateCollectionArgs, 'input'>>;
   deleteAllCollections?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   deleteCollection?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteCollectionArgs, 'id'>>;
-  deleteUsers?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   updateCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationUpdateCollectionArgs, 'id' | 'update'>>;
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<QueryGetCollectionArgs, 'id'>>;
   getCollections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType>;
-  getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
-};
-
-export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {
@@ -245,6 +227,5 @@ export type Resolvers<ContextType = Context> = {
   Criteria?: CriteriaResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
 };
 

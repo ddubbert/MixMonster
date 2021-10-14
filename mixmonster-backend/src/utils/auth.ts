@@ -1,14 +1,12 @@
 import { useGenericAuth, ResolveUserFn, ValidateUserFn } from '@envelop/generic-auth';
 import { Plugin } from '@envelop/types';
 import axios from 'axios';
-import { UserType, Context } from '../types/basic';
-import * as util from 'util'
+import { UserType } from '../types/basic';
 
 const keycloak = require('../../keycloak.json');
 
 const resolveUserFn: ResolveUserFn<UserType> = async context => {
   try {
-    console.log(util.inspect(context.req));
     // @ts-ignore
     const token = context.req.headers.authorization;
     // @ts-ignore
@@ -23,14 +21,9 @@ const resolveUserFn: ResolveUserFn<UserType> = async context => {
     };
 
     const userInfo = await axios.get(url, config);
+    console.log(userInfo.data);
 
-    let dbUser = await (context as unknown as Context).db.User.findOne({ authId: userInfo.data.sub });
-
-    if(!dbUser) {
-      dbUser = await (new (context as unknown as Context).db.User({ authId: userInfo.data.sub })).save();
-    }
-
-    return { authId: userInfo.data.sub, id: dbUser.id };
+    return { id: userInfo.data.sub };
   } catch (e) {
     return null;
   }
