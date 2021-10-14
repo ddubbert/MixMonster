@@ -5,7 +5,7 @@ import {Document, Types} from 'mongoose'
 
 const getCollectionIfOwner = async (context: Context, collectionId: string)
   : Promise<Document<any, any, DBCollection> & DBCollection & {_id: Types.ObjectId}> => {
-  const collection = await context.db.Collection.findOne({ id: collectionId });
+  const collection = await context.db.Collection.findOne({ _id: collectionId });
 
   if(!collection || collection.author !== context.currentUser.id) {
     throw new Error('Not authorized to modify this collection.');
@@ -15,12 +15,6 @@ const getCollectionIfOwner = async (context: Context, collectionId: string)
 
 const resolvers : Resolvers = {
   Query: {
-    getUser: async (parent, args, context) => {
-      return context.db.User.findOne({ _id: context.currentUser.id });
-    },
-    getUsers: async (parent, args, context) => {
-      return context.db.User.find();
-    },
     getCollection: async (parent, args, context) => {
       const collection = await context.db.Collection.findOne({ _id: args.id });
 
@@ -32,10 +26,6 @@ const resolvers : Resolvers = {
     }
   },
   Mutation: {
-    deleteUsers: async (parent, args, context) => {
-      const { deletedCount } = await context.db.User.deleteMany();
-      return deletedCount > 0;
-    },
     createCollection: async (parent, args, context) => {
       return (new context.db.Collection({ author: context.currentUser.id, ...args.input })).save();
     },

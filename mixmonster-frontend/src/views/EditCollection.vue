@@ -33,7 +33,7 @@
                 <v-icon x-large>mdi-arrow-left-circle</v-icon>
               </v-btn>
               <v-btn v-else
-                to='/collections'
+                @click="$router.push({ name: 'Collections' })"
                 fab
                 color='primary'
                 class='ma-3'
@@ -77,7 +77,7 @@
                 <v-btn
                   color="error"
                   dark
-                  to='/collections'
+                  @click="$router.push({ name: 'Collections' })"
                 >
                   Bearbeitung abbrechen
                 </v-btn>
@@ -115,6 +115,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import CollectionEditor, { CollectionEditorType } from '@/components/CollectionEditor.vue';
 import { Collection } from '@/types/generated/graphql';
+import { getValidUpdate } from '@/utils/InputCreator';
 
 const EditProps = Vue.extend({
   props: {
@@ -134,15 +135,23 @@ export default class EditCollection extends EditProps {
   dialog = false;
 
   get collection(): Collection | undefined {
-    return this.$store.getters.getCollection(this.collectionId);
+    return this.$store.getters.getCollections(this.collectionId);
   }
 
   update(): void {
+    const variables = getValidUpdate((this.$refs.editor as CollectionEditorType).collection);
+
     this.$store.dispatch(
       'updateCollection',
-      (this.$refs.editor as CollectionEditorType).collection,
+      variables,
     );
-    this.$router.push('/collections');
+    this.$router.push({ name: 'Collections' });
+  }
+
+  beforeCreate(): void {
+    if (!this.$keycloak.token) {
+      this.$router.push({ name: 'Collections' });
+    }
   }
 }
 </script>

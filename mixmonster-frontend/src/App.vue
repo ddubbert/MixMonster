@@ -21,19 +21,11 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        to='/collections'
+        @click.stop="$router.push({ name: 'Home' })"
         icon
         class='ml-2 mr-2'
       >
-        <v-icon x-large>mdi-view-list</v-icon>
-      </v-btn>
-
-      <v-btn
-        to='/login'
-        icon
-        class='ml-2 mr-2'
-      >
-        <v-icon x-large>mdi-account-circle</v-icon>
+        <v-icon x-large>mdi-home-circle</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -59,5 +51,9 @@ export default class App extends Vue {
 
 .myHeading {
   font-size: 2.5rem;
+}
+
+.mySubtitle {
+  font-size: 2rem;
 }
 </style>

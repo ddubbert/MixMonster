@@ -61,7 +61,7 @@
                 <v-btn
                   color="error"
                   dark
-                  to='/collections'
+                  @click="$router.push({ name: 'Collections' })"
                 >
                   Bearbeitung abbrechen
                 </v-btn>
@@ -99,6 +99,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import CollectionEditor, { CollectionEditorType } from '@/components/CollectionEditor.vue';
 import { Collection } from '@/types/generated/graphql';
+import { getValidCreate } from '@/utils/InputCreator';
 
 @Component({
   components: {
@@ -129,9 +130,15 @@ export default class CreateCollection extends Vue {
   save(): void {
     this.$store.dispatch(
       'createCollection',
-      (this.$refs.editor as CollectionEditorType).collection,
+      getValidCreate((this.$refs.editor as CollectionEditorType).collection),
     );
-    this.$router.push('/collections');
+    this.$router.push({ name: 'Collections' });
+  }
+
+  beforeCreate(): void {
+    if (!this.$keycloak.token) {
+      this.$router.push({ name: 'Collections' });
+    }
   }
 }
 </script>
