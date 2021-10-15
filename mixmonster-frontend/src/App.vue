@@ -15,7 +15,11 @@
           width="50"
         />
 
-        <v-toolbar-title><strong class='appTitle'>MixMonster</strong></v-toolbar-title>
+        <v-toolbar-title>
+          <span class='text-h3'>
+            <strong>MixMonster</strong>
+          </span>
+        </v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
@@ -43,17 +47,3 @@ import Component from 'vue-class-component';
 export default class App extends Vue {
 }
 </script>
-
-<style>
-.appTitle {
-  font-size: 3rem;
-}
-
-.myHeading {
-  font-size: 2.5rem;
-}
-
-.mySubtitle {
-  font-size: 2rem;
-}
-</style>
