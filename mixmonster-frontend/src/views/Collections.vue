@@ -2,16 +2,19 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-row align='center' justify='center'>
+        <v-row align='center' justify='center' class='mt-10 mb-10'>
           <v-spacer></v-spacer>
-          <strong class='myHeading'>Deine Sammlungen:</strong>
+          <span class='text-h3' align='center'>
+            <strong>Deine Sammlungen:</strong>
+          </span>
           <v-spacer></v-spacer>
         </v-row>
         <v-row
           align='center'
           justify='center'
           v-for='(collection, index) in collections'
-          :key='collection.id'>
+          :key='collection.id'
+        >
           <v-col xs='12' sm='10' md='8'>
             <v-card class="elevation-2" @click.stop='edit(index)'>
               <v-toolbar dark color="primary">
@@ -163,7 +166,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { mapGetters, mapActions } from 'vuex';
 import { Collection } from '@/types/generated/graphql';
 import CSVManager from '@/utils/CSVManager';
 import { getValidCreate } from '@/utils/InputCreator';

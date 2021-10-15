@@ -1,13 +1,38 @@
 <template>
   <v-container>
     <v-row align='center' justify='center'>
-      <v-col xs='12' sm='10' md='8'>
+      <v-col xs='12' sm='12' md='12' lg='8'>
         <v-text-field
           outlined
           v-model='collection.title'
           label='Sammlungsname'
+          clearable
+          class='text-h5'
         >
         </v-text-field>
+      </v-col>
+    </v-row>
+
+    <v-row align='center' justify="center" class='mt-n10'>
+      <v-col  xs='12' sm='12' md='12' lg='8'>
+        <v-row align='center' justify='center'>
+          <v-switch v-model="collection.allowReRoll">
+            <template v-slot:label>
+              <div>
+                Erneutes würfeln erlauben?
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on='on' medium color='primary' class='mb-10'>
+                      mdi-message-question-outline
+                    </v-icon>
+                  </template>
+                  Nutzer die mit ihrem zufälligen MonsterMix nicht zufrieden sind
+                  erhalten hierdurch die Möglichkeit erneut zu würfeln.
+                </v-tooltip>
+              </div>
+            </template>
+          </v-switch>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -15,7 +40,7 @@
       align='center'
       justify='center'
     >
-      <v-col xs='12' sm='10' md='8'>
+      <v-col  xs='12' sm='12' md='12' lg='8'>
         <v-expansion-panels multiple>
           <v-expansion-panel
             v-for='(category, categoryIndex) in collection.categories'
@@ -27,7 +52,7 @@
                 <v-icon x-large color='white'>mdi-menu-down</v-icon>
               </template>
 
-              <span class='text-h6 white--text'><strong>{{ category.title }}</strong></span>
+              <span class='text-h5 white--text'><strong>{{ category.title }}</strong></span>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content
@@ -38,10 +63,11 @@
               }"
             >
               <v-row class='mt-2' align='center' justify='start'>
-                <v-col>
+                <v-col xs='10' sm='8' md='6' lg='4'>
                   <v-text-field
                     v-model='category.title'
                     label='Kategoriename'
+                    clearable
                   >
                   </v-text-field>
                 </v-col>
@@ -50,7 +76,7 @@
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        @click.stop='deleteCategory(index)'
+                        @click.stop='deleteCategory(categoryIndex)'
                         icon
                         class='ml-1 mr-1'
                         v-bind="attrs"
@@ -66,103 +92,175 @@
                 </v-col>
               </v-row>
 
-              <v-row
-                align='center'
-                justify='start'
-                class='ma-2'
-              >
-                <v-col
-                  v-for='(criteria, criteriaIndex) in category.criteria'
-                  :key='`criteria${criteriaIndex}`'
-                  xs='12'
-                  sm='6'
-                  md='6'
-                  lg='4'
-                  class='pa-0'
-                >
-                  <v-card class='ma-2'>
-                    <v-alert
-                      outlined
-                      color='accent'
-                      style='border-width: 2px !important;'
+              <v-row align='center' justify="center" class='mt-n5'>
+                <v-col sm='12' md='6'>
+                  <v-row align='center' justify='center'>
+                    <v-switch v-model="category.selectable" color='accent'>
+                      <template v-slot:label>
+                        <div>
+                          Vorauswahl / Eingrenzung erlauben?
+                          <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-icon v-on='on' medium color='accent' class='mb-10'>
+                                mdi-message-question-outline
+                              </v-icon>
+                            </template>
+                            Nutzer können mögliche Kriterien dieser Kategorie vor einem MonsterMix
+                            eingrenzen bzw. eine Vorauswahl tätigen.
+                          </v-tooltip>
+                        </div>
+                      </template>
+                    </v-switch>
+                  </v-row>
+                </v-col>
+
+                <v-col xs='12' sm='6' md='6'>
+                  <v-row align='center' justify='center'>
+                    <v-col cols='2'>
+                      <v-text-field
+                        color='accent'
+                        v-model='category.criteriaRollAmount'
+                        type='number'
+                      />
+                    </v-col>
+
+                    <div>
+                      <span class='theme--light v-label'>Anzahl gewürfelter Zufallskriterien</span>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-icon v-on='on' medium color='accent' class='mb-10'>
+                            mdi-message-question-outline
+                          </v-icon>
+                        </template>
+                        Nutzer die mit ihrem zufälligen MonsterMix nicht zufrieden sind
+                        erhalten hierdurch die Möglichkeit erneut zu würfeln.
+                      </v-tooltip>
+                    </div>
+                  </v-row>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col class='pa-0'>
+                  <v-expansion-panels multiple>
+                    <v-row
+                      align='top'
+                      class='ma-2 justify-sm-center justify-lg-start'
                     >
-                      <v-row
-                        align='center'
-                        justify='start'
-                        class='ma-1'
+                      <v-col
+                        v-for='(criteria, criteriaIndex) in category.criteria'
+                        :key='`criteria${criteriaIndex}`'
+                        xs='12'
+                        sm='8'
+                        md='8'
+                        lg='6'
+                        xl='4'
+                        class='pa-1'
                       >
-                        <v-text-field
-                          v-model='criteria.title'
-                          label='Kriterium'
-                        >
-                        </v-text-field>
-                      </v-row>
+                        <v-expansion-panel>
+                          <v-expansion-panel-header color='accent'>
+                            <template v-slot:actions>
+                              <v-icon x-large color='white'>mdi-menu-down</v-icon>
+                            </template>
 
-                      <v-row
-                        align='center'
-                        justify='start'
-                        class='ma-1'
-                      >
-                        <v-text-field
-                          v-model='criteria.image'
-                          label='Bild URL'
-                          prepend-icon='mdi-camera'
-                        >
-                        </v-text-field>
-                      </v-row>
+                            <span class='text-h6 white--text'>
+                              <strong>{{ criteria.title }}</strong>
+                            </span>
+                          </v-expansion-panel-header>
 
-                      <v-row
-                        align='center'
-                        justify='center'
-                        class='ma-1  mb-3'
-                      >
-                        <v-card v-if='criteria.image'>
-                          <v-img
-                            contain
-                            :width='imageSize'
-                            :height='imageSize'
-                            :src='criteria.image'
-                          ></v-img>
-                        </v-card>
-                      </v-row>
-                      <v-row
-                        align='center'
-                        justify='center'
-                        class='ma-1'
-                      >
-                        <v-tooltip top v-if='criteria.image'>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              @click='removeImage(index, criteriaIndex)'
-                              icon
-                              class='ml-1 mr-1'
-                              v-bind="attrs"
-                              v-on="on"
-                              color='error'
+                          <v-expansion-panel-content
+                            :style="{
+                              border: `5px solid ${accent}`,
+                              ['border-bottom-left-radius']: 'inherit',
+                              ['border-bottom-right-radius']: 'inherit',
+                            }"
+                          >
+                            <v-row
+                              align='center'
+                              justify='start'
+                              class='mt-3'
                             >
-                              <v-icon>mdi-camera-off</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Bild entfernen</span>
-                        </v-tooltip>
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              @click='deleteCriteria(index, criteriaIndex)'
-                              icon
-                              class='ml-1 mr-1'
-                              v-bind="attrs"
-                              v-on="on"
-                              color='error'
+                              <v-text-field
+                                v-model='criteria.title'
+                                label='Kriterium'
+                                clearable
+                                color='accent'
+                              >
+                              </v-text-field>
+                            </v-row>
+
+                            <v-row
+                              align='center'
+                              justify='start'
+                              class='mt-1'
                             >
-                              <v-icon large>mdi-delete-forever</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Löschen</span>
-                        </v-tooltip>
-                      </v-row>
-                    </v-alert>
-                  </v-card>
+                              <v-text-field
+                                v-model='criteria.image'
+                                label='Bild URL'
+                                prepend-icon='mdi-camera'
+                                clearable
+                                color='accent'
+                              >
+                              </v-text-field>
+                            </v-row>
+
+                            <v-row
+                              align='center'
+                              justify='center'
+                              class='mt-1 mb-2'
+                            >
+                              <v-card v-if='criteria.image'>
+                                <v-img
+                                  contain
+                                  :width='imageSize'
+                                  :height='imageSize'
+                                  :src='criteria.image'
+                                ></v-img>
+                              </v-card>
+                            </v-row>
+                            <v-row
+                              align='center'
+                              justify='center'
+                              class='mt-1'
+                            >
+                              <v-tooltip top v-if='criteria.image'>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    @click='removeImage(categoryIndex, criteriaIndex)'
+                                    icon
+                                    class='ml-1 mr-1'
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    color='error'
+                                    x-large
+                                  >
+                                    <v-icon large>mdi-camera-off</v-icon>
+                                  </v-btn>
+                                </template>
+                                <span>Bild entfernen</span>
+                              </v-tooltip>
+                              <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    @click='deleteCriteria(categoryIndex, criteriaIndex)'
+                                    icon
+                                    class='ml-1 mr-1'
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    color='error'
+                                    x-large
+                                  >
+                                    <v-icon x-large>mdi-delete-forever</v-icon>
+                                  </v-btn>
+                                </template>
+                                <span>Löschen</span>
+                              </v-tooltip>
+                            </v-row>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-col>
+                    </v-row>
+                  </v-expansion-panels>
                 </v-col>
               </v-row>
 
@@ -171,7 +269,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      @click='addCriteria(index)'
+                      @click='addCriteria(categoryIndex)'
                       color='accent'
                       class='ma-1'
                       large
@@ -191,174 +289,12 @@
       </v-col>
     </v-row>
 
-    <v-row
-      align='center'
-      justify='center'
-      v-for='(category, index) in collection.categories'
-      :key='index'
-    >
-      <v-col xs='12' sm='10' md='8'>
-        <v-card>
-          <v-alert outlined color='primary' style='border-width: 5px !important'>
-            <v-row align='center' justify='start' class='ma-2'>
-              <v-col xs='12' sm='8' md='4'>
-                <v-text-field
-                  v-model='category.title'
-                  label='Kategoriename'
-                >
-                </v-text-field>
-              </v-col>
-
-              <v-col>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click='deleteCategory(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                      color='error'
-                      x-large
-                    >
-                      <v-icon x-large>mdi-delete-forever</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Kategorie löschen</span>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-
-            <v-row
-              align='center'
-              justify='start'
-              class='ma-2'
-            >
-              <v-col
-                v-for='(criteria, criteriaIndex) in category.criteria'
-                :key='`criteria${criteriaIndex}`'
-                xs='12'
-                sm='6'
-                md='6'
-                lg='4'
-                class='pa-0'
-              >
-                <v-card class='ma-2'>
-                  <v-alert
-                    outlined
-                    color='accent'
-                    style='border-width: 2px !important;'
-                  >
-                    <v-row
-                      align='center'
-                      justify='start'
-                      class='ma-1'
-                    >
-                      <v-text-field
-                        v-model='criteria.title'
-                        label='Kriterium'
-                      >
-                      </v-text-field>
-                    </v-row>
-
-                    <v-row
-                      align='center'
-                      justify='start'
-                      class='ma-1'
-                    >
-                      <v-text-field
-                        v-model='criteria.image'
-                        label='Bild URL'
-                        prepend-icon='mdi-camera'
-                      >
-                      </v-text-field>
-                    </v-row>
-
-                    <v-row
-                      align='center'
-                      justify='center'
-                      class='ma-1  mb-3'
-                    >
-                      <v-card v-if='criteria.image'>
-                        <v-img
-                          contain
-                          :width='imageSize'
-                          :height='imageSize'
-                          :src='criteria.image'
-                        ></v-img>
-                      </v-card>
-                    </v-row>
-                    <v-row
-                      align='center'
-                      justify='center'
-                      class='ma-1'
-                    >
-                      <v-tooltip top v-if='criteria.image'>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            @click='removeImage(index, criteriaIndex)'
-                            icon
-                            class='ml-1 mr-1'
-                            v-bind="attrs"
-                            v-on="on"
-                            color='error'
-                          >
-                            <v-icon>mdi-camera-off</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Bild entfernen</span>
-                      </v-tooltip>
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            @click='deleteCriteria(index, criteriaIndex)'
-                            icon
-                            class='ml-1 mr-1'
-                            v-bind="attrs"
-                            v-on="on"
-                            color='error'
-                          >
-                            <v-icon large>mdi-delete-forever</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Löschen</span>
-                      </v-tooltip>
-                    </v-row>
-                  </v-alert>
-                </v-card>
-              </v-col>
-            </v-row>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    @click='addCriteria(index)'
-                    color='accent'
-                    class='ma-1'
-                    large
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    <v-icon large>mdi-plus-circle</v-icon>
-                  </v-btn>
-                </template>
-                <span>Kriterium hinzufügen</span>
-              </v-tooltip>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-alert>
-        </v-card>
-      </v-col>
-    </v-row>
     <v-row align='center' justify='center'>
       <v-spacer></v-spacer>
       <v-tooltip top>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             @click='addCategory()'
-            fab
             color='primary'
             class='ma-3'
             x-large
@@ -403,6 +339,8 @@ export default class CollectionEditor extends EditorProps {
   };
 
   primary = this.$vuetify.theme.themes.dark.primary;
+
+  accent = this.$vuetify.theme.themes.dark.accent;
 
   collection: Collection = JSON.parse(JSON.stringify(this.initialCollection));
 

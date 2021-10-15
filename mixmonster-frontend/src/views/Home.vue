@@ -2,14 +2,18 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-row align='center' justify='center' class='mb-16'>
-          <strong class='appTitle'>Willkommen beim MixMonster!</strong>
+        <v-row align='center' justify='center' class='mt-10 mb-10'>
+          <span class='text-h3'>
+            <strong>Willkommen beim MixMonster!</strong>
+          </span>
         </v-row>
 
         <v-row align='center' justify='center'>
           <v-col xl='4' lg='4' md='6' sm='8' xs='12'  class='pa-5'>
             <v-row align='center' justify='center' class='mb-10 mt-10'>
-              <strong class='mySubtitle'>Du kannst</strong>
+              <span class='text-h4'>
+                <strong>Du kannst</strong>
+              </span>
             </v-row>
 
             <v-row align='center' justify='center' class='mb-14'>
@@ -24,7 +28,9 @@
             </v-row>
 
             <v-row align='center' justify='center'>
-              <strong class='mySubtitle'>oder</strong>
+              <span class='text-h4'>
+                <strong>oder</strong>
+              </span>
             </v-row>
 
             <v-row align='center' justify='center' class='mt-16'>
