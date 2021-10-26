@@ -19,7 +19,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn @click='dialog = true'
                          fab
-                         color='primary'
+                         color='error'
                          class='ma-3'
                          x-large
                          v-bind="attrs"
@@ -55,37 +55,38 @@
           v-model="dialog"
         >
           <v-card>
-            <v-card-title class="text-h5">
+            <v-card-title class='text-h5 text-center'>
               <v-spacer></v-spacer>
               Bearbeitung abbrechen?
               <v-spacer></v-spacer>
             </v-card-title>
 
             <v-card-text>
-              <v-row align='center' justify='center'>
+              <v-row align='center' justify='center' class='text-center mt-1'>
                 Wenn du die Bearbeitung abbrichst, gehen alle Änderungen unwiderruflich verloren.
               </v-row>
             </v-card-text>
 
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-row align='center' justify='center' class='mt-2 mb-3'>
+                <v-btn
+                  color="primary"
+                  dark
+                  class='ma-1'
+                  @click="dialog = false"
+                >
+                  Bearbeitung fortsetzen
+                </v-btn>
 
-              <v-btn
-                color="primary"
-                dark
-                @click="dialog = false"
-              >
-                Bearbeitung fortsetzen
-              </v-btn>
-
-              <v-btn
-                color="error"
-                dark
-                @click="$router.push({ name: 'Collections' })"
-              >
-                Bearbeitung abbrechen
-              </v-btn>
-              <v-spacer></v-spacer>
+                <v-btn
+                  color="error"
+                  dark
+                  class='ma-1'
+                  @click="$router.push({ name: 'Collections' })"
+                >
+                  Bearbeitung abbrechen
+                </v-btn>
+              </v-row>
             </v-card-actions>
           </v-card>
         </v-dialog>

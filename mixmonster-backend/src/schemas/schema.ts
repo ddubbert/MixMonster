@@ -14,7 +14,7 @@ export default /* GraphQL */`
     }
     
     type Criteria {
-        title: String!
+        title: String
         image: String
     }
 
@@ -32,7 +32,7 @@ export default /* GraphQL */`
     }
     
     input CriteriaInput {
-        title: String!
+        title: String
         image: String
     }
     
