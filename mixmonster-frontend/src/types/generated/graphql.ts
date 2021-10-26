@@ -44,12 +44,12 @@ export type CollectionInput = {
 export type Criteria = {
   __typename?: 'Criteria';
   image?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
 };
 
 export type CriteriaInput = {
   image?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -57,7 +57,6 @@ export type Mutation = {
   createCollection: Collection;
   deleteAllCollections: Scalars['Boolean'];
   deleteCollection: Scalars['Boolean'];
-  deleteUsers: Scalars['Boolean'];
   updateCollection: Collection;
 };
 
@@ -81,8 +80,6 @@ export type Query = {
   __typename?: 'Query';
   getCollection: Collection;
   getCollections: Array<Collection>;
-  getUser: User;
-  getUsers: Array<User>;
 };
 
 
@@ -90,24 +87,19 @@ export type QueryGetCollectionArgs = {
   id: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-};
-
-export type CollectionDataFragment = { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> };
+export type CollectionDataFragment = { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title?: string | null | undefined, image?: string | null | undefined }> }> };
 
 export type GetCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCollectionsQuery = { __typename?: 'Query', getCollections: Array<{ __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> }> };
+export type GetCollectionsQuery = { __typename?: 'Query', getCollections: Array<{ __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title?: string | null | undefined, image?: string | null | undefined }> }> }> };
 
 export type CreateCollectionMutationVariables = Exact<{
   input: CollectionInput;
 }>;
 
 
-export type CreateCollectionMutation = { __typename?: 'Mutation', createCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> } };
+export type CreateCollectionMutation = { __typename?: 'Mutation', createCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title?: string | null | undefined, image?: string | null | undefined }> }> } };
 
 export type UpdateCollectionMutationVariables = Exact<{
   id: Scalars['String'];
@@ -115,7 +107,7 @@ export type UpdateCollectionMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCollectionMutation = { __typename?: 'Mutation', updateCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title: string, image?: string | null | undefined }> }> } };
+export type UpdateCollectionMutation = { __typename?: 'Mutation', updateCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title?: string | null | undefined, image?: string | null | undefined }> }> } };
 
 export type DeleteCollectionMutationVariables = Exact<{
   id: Scalars['String'];

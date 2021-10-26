@@ -15,101 +15,105 @@
           v-for='(collection, index) in collections'
           :key='collection.id'
         >
-          <v-col xs='12' sm='10' md='8'>
-            <v-card class="elevation-2" @click.stop='edit(index)'>
-              <v-toolbar dark color="primary">
-                <v-toolbar-title><strong>{{ collection.title }}</strong></v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click.stop='preview(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon large>mdi-magnify</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Probeansicht</span>
-                </v-tooltip>
+          <v-col cols='12' xs='12' sm='10' md='8'>
+            <v-card dark class="elevation-2" @click.stop='edit(index)' color='primary'>
+              <v-row align='center' justify='start' class='pl-3 pr-3 mb-2'>
+                <v-col cols='12' xs='12' sm='6' md='6' lg='6' xl='6'>
+                  <span class='text-h5 white--text'><strong>{{ collection.title }}</strong></span>
+                </v-col>
 
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click.stop='edit(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon large>mdi-circle-edit-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Bearbeiten</span>
-                </v-tooltip>
+                <v-col cols='12' xs='12' sm='6' md='6' lg='6' xl='6' class='text-right'>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='preview(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon large>mdi-magnify</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Probeansicht</span>
+                  </v-tooltip>
 
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click.stop='duplicate(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon large>mdi-content-duplicate</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Duplizieren</span>
-                </v-tooltip>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='edit(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon large>mdi-circle-edit-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Bearbeiten</span>
+                  </v-tooltip>
 
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click.stop='share(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon large>mdi-share-variant</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Teilen</span>
-                </v-tooltip>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='duplicate(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon large>mdi-content-duplicate</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Duplizieren</span>
+                  </v-tooltip>
 
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click.stop='download(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon large>mdi-download-circle</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Herunterladen</span>
-                </v-tooltip>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='share(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon large>mdi-share-variant</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Teilen</span>
+                  </v-tooltip>
 
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      @click.stop='remove(index)'
-                      icon
-                      class='ml-1 mr-1'
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <v-icon large>mdi-delete-forever</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Löschen</span>
-                </v-tooltip>
-              </v-toolbar>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='download(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon large>mdi-download-circle</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Herunterladen</span>
+                  </v-tooltip>
+
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        @click.stop='remove(index)'
+                        icon
+                        class='ml-1 mr-1'
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon large>mdi-delete-forever</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Löschen</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
             </v-card>
           </v-col>
         </v-row>

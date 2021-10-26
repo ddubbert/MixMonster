@@ -47,12 +47,12 @@ export type CollectionInput = {
 export type Criteria = {
   __typename?: 'Criteria';
   image?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
 };
 
 export type CriteriaInput = {
   image?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -205,7 +205,7 @@ export type CollectionResolvers<ContextType = Context, ParentType extends Resolv
 
 export type CriteriaResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Criteria'] = ResolversParentTypes['Criteria']> = {
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

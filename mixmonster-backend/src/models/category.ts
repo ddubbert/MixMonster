@@ -8,7 +8,7 @@ export interface DBCategory extends Category {
 }
 
 const criteriaSchema = new Schema<DBCriteria>({
-  title: { type: Schema.Types.String, required: true },
+  title: { type: Schema.Types.String, required: false },
   image: String,
 });
 

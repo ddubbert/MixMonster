@@ -8,6 +8,12 @@
           label='Sammlungsname'
           clearable
           class='text-h5'
+          :rules="[
+            () => !!collection.title
+              && collection.title.length >= 1
+              && collection.title.trim().length >= 1
+              || `Es muss ein Name für die Sammlung vergeben werden!`,
+          ]"
         >
         </v-text-field>
       </v-col>
@@ -16,22 +22,19 @@
     <v-row align='center' justify="center" class='mt-n10'>
       <v-col  xs='12' sm='12' md='12' lg='8'>
         <v-row align='center' justify='center'>
-          <v-switch v-model="collection.allowReRoll">
-            <template v-slot:label>
-              <div>
-                Erneutes würfeln erlauben?
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on='on' medium color='primary' class='mb-10'>
-                      mdi-message-question-outline
-                    </v-icon>
-                  </template>
-                  Nutzer die mit ihrem zufälligen MonsterMix nicht zufrieden sind
-                  erhalten hierdurch die Möglichkeit erneut zu würfeln.
-                </v-tooltip>
-              </div>
-            </template>
-          </v-switch>
+          <v-switch v-model="collection.allowReRoll"/>
+          <div>
+            Erneutes würfeln erlauben?
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on='on' medium color='primary' class='mb-10'>
+                  mdi-message-question-outline
+                </v-icon>
+              </template>
+              Nutzer die mit ihrem zufälligen MonsterMix nicht zufrieden sind
+              erhalten hierdurch die Möglichkeit erneut zu würfeln.
+            </v-tooltip>
+          </div>
         </v-row>
       </v-col>
     </v-row>
@@ -63,77 +66,67 @@
               }"
             >
               <v-row class='mt-2' align='center' justify='start'>
-                <v-col xs='10' sm='8' md='6' lg='4'>
+                <v-col cols='12' xs='12' sm='10' md='8' lg='6'>
                   <v-text-field
                     v-model='category.title'
                     label='Kategoriename'
                     clearable
+                    :rules="[
+                      () => !!category.title
+                        && category.title.length >= 1
+                        && category.title.trim().length >= 1
+                        || `Es muss ein Name für die Kategorie vergeben werden!`,
+                    ]"
                   >
                   </v-text-field>
-                </v-col>
-
-                <v-col>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        @click.stop='deleteCategory(categoryIndex)'
-                        icon
-                        class='ml-1 mr-1'
-                        v-bind="attrs"
-                        v-on="on"
-                        color='error'
-                        x-large
-                      >
-                        <v-icon x-large>mdi-delete-forever</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Kategorie löschen</span>
-                  </v-tooltip>
                 </v-col>
               </v-row>
 
               <v-row align='center' justify="center" class='mt-n5'>
                 <v-col sm='12' md='6'>
                   <v-row align='center' justify='center'>
-                    <v-switch v-model="category.selectable" color='accent'>
-                      <template v-slot:label>
-                        <div>
-                          Vorauswahl / Eingrenzung erlauben?
-                          <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                              <v-icon v-on='on' medium color='accent' class='mb-10'>
-                                mdi-message-question-outline
-                              </v-icon>
-                            </template>
-                            Nutzer können mögliche Kriterien dieser Kategorie vor einem MonsterMix
-                            eingrenzen bzw. eine Vorauswahl tätigen.
-                          </v-tooltip>
-                        </div>
-                      </template>
-                    </v-switch>
-                  </v-row>
-                </v-col>
-
-                <v-col xs='12' sm='6' md='6'>
-                  <v-row align='center' justify='center'>
-                    <v-col cols='2'>
-                      <v-text-field
-                        color='accent'
-                        v-model='category.criteriaRollAmount'
-                        type='number'
-                      />
-                    </v-col>
-
+                    <v-switch v-model="category.selectable" color='accent'/>
                     <div>
-                      <span class='theme--light v-label'>Anzahl gewürfelter Zufallskriterien</span>
+                      Vorauswahl erlauben?
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
                           <v-icon v-on='on' medium color='accent' class='mb-10'>
                             mdi-message-question-outline
                           </v-icon>
                         </template>
-                        Nutzer die mit ihrem zufälligen MonsterMix nicht zufrieden sind
-                        erhalten hierdurch die Möglichkeit erneut zu würfeln.
+                        Nutzer können mögliche Kriterien dieser Kategorie vor einem MonsterMix
+                        eingrenzen bzw. eine Vorauswahl tätigen.
+                      </v-tooltip>
+                    </div>
+                  </v-row>
+                </v-col>
+
+                <v-col cols='12' xs='12' sm='12' md='6'>
+                  <v-row align='center' justify='center'>
+                    <v-col cols='2'>
+                      <v-text-field
+                        color='accent'
+                        v-model.number='category.criteriaRollAmount'
+                        :rules="[
+                          () => !!category.criteriaRollAmount
+                            && category.criteriaRollAmount >= 1
+                            && category.criteriaRollAmount <= category.criteria.length
+                            || `Zahl muss mindestens 1 und maximal die Anzahl der Kriterien sein!`,
+                        ]"
+                        type='number'
+                      />
+                    </v-col>
+
+                    <div>
+                      <span>Anzahl der Zufallskriterien</span>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-icon v-on='on' medium color='accent' class='mb-10'>
+                            mdi-message-question-outline
+                          </v-icon>
+                        </template>
+                        Diese Zahl bestimmt, wieviele Zufallskriterium für Nutzer bei einem
+                        MonsterMix für diese Kategorie generiert werden.
                       </v-tooltip>
                     </div>
                   </v-row>
@@ -150,9 +143,10 @@
                       <v-col
                         v-for='(criteria, criteriaIndex) in category.criteria'
                         :key='`criteria${criteriaIndex}`'
+                        cols='12'
                         xs='12'
-                        sm='8'
-                        md='8'
+                        sm='6'
+                        md='6'
                         lg='6'
                         xl='4'
                         class='pa-1'
@@ -163,9 +157,24 @@
                               <v-icon x-large color='white'>mdi-menu-down</v-icon>
                             </template>
 
-                            <span class='text-h6 white--text'>
-                              <strong>{{ criteria.title }}</strong>
-                            </span>
+                            <v-row>
+                              <v-col v-if='!!criteria.title'>
+                                <span class='text-h6 white--text'>
+                                  <strong>{{ criteria.title }}</strong>
+                                </span>
+                              </v-col>
+
+                              <v-col v-else-if='!!criteria.image' class='pa-0'>
+                                <v-avatar color='white'
+                                          size='45'
+                                          rounded
+                                          style='border: 2px solid white;'>
+                                  <v-img :aspect-ratio='16/9'
+                                         :src='criteria.image'
+                                         alt='Bild des Kriteriums'/>
+                                </v-avatar>
+                              </v-col>
+                            </v-row>
                           </v-expansion-panel-header>
 
                           <v-expansion-panel-content
@@ -282,6 +291,24 @@
                   <span>Kriterium hinzufügen</span>
                 </v-tooltip>
                 <v-spacer></v-spacer>
+              </v-row>
+
+              <v-row justify='end' align='center'>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      @click.stop='deleteCategory(categoryIndex)'
+                      text
+                      v-bind="attrs"
+                      v-on="on"
+                      color='error'
+                      x-large
+                    >
+                      Kategorie Löschen
+                    </v-btn>
+                  </template>
+                  <span>Kategorie löschen</span>
+                </v-tooltip>
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
