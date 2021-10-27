@@ -7,7 +7,11 @@ import {
   Collection,
   CreateCollection,
   CreateCollectionMutation,
-  CreateCollectionMutationVariables, DeleteCollection, DeleteCollectionMutation,
+  CreateCollectionMutationVariables,
+  DeleteCollection,
+  DeleteCollectionMutation,
+  GetCollection,
+  GetCollectionQuery,
   GetCollections,
   GetCollectionsQuery,
   UpdateCollection,
@@ -45,8 +49,9 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
       collections: [] as Collection[],
     },
     getters: {
-      getCollections: (state) => (collectionId: string): Collection | undefined => state
-        .collections.find((collection) => collection.id === collectionId),
+      getCollection: (state) => (collectionId: string): Collection | undefined => state
+        .collections
+        .find((col) => col.id === collectionId),
     },
     mutations: {
       addCollection(state, collection: Collection) {
@@ -68,6 +73,15 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
         const requestedCollections = (await apolloClient
           .query<GetCollectionsQuery>({ query: GetCollections })).data.getCollections;
         state.collections.splice(0, state.collections.length, ...requestedCollections);
+      },
+      async getCollection({ state }, collectionId: string) {
+        console.log(collectionId, typeof collectionId);
+        const requestedCollection = (await apolloClient
+          .query<GetCollectionQuery>({
+            query: GetCollection,
+            variables: { id: collectionId },
+          })).data.getCollection;
+        state.collections.push(requestedCollection);
       },
       async createCollection(
         { commit },

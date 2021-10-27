@@ -2,7 +2,7 @@
   <v-container>
     <v-row align='center' justify='center'>
       <v-spacer></v-spacer>
-      <strong class='myHeading'>{{ currentCollection.title }}</strong>
+      <strong class='myHeading' align='center'>{{ currentCollection.title }}</strong>
       <v-spacer></v-spacer>
     </v-row>
 

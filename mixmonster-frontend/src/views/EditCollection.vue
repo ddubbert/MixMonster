@@ -98,6 +98,7 @@
                 <v-btn
                   color="error"
                   dark
+                  text
                   class='ma-1'
                   @click="$router.push({ name: 'Collections' })"
                 >
