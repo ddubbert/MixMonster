@@ -20,6 +20,12 @@ export default /* GraphQL */`
     }
   }
 
+  query getCollection($id: String!) {
+    getCollection(id: $id) {
+      ...collectionData
+    }
+  }
+
   mutation createCollection($input: CollectionInput!) {
     createCollection(input: $input) {
       ...collectionData

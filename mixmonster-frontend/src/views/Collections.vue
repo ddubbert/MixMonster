@@ -117,7 +117,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row align='center' justify='center'>
+        <v-row align='center' justify='center' class='mt-5'>
           <v-spacer></v-spacer>
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
@@ -162,6 +162,94 @@
           </v-tooltip>
           <v-spacer></v-spacer>
         </v-row>
+
+        <v-dialog
+          v-model="shareDialog"
+        >
+          <v-card>
+            <v-card-title class='text-h5 text-center'>
+              <v-spacer></v-spacer>
+              {{ `${collections[shareIndex].title} teilen:` }}
+              <v-spacer></v-spacer>
+            </v-card-title>
+
+            <v-card-text>
+              <v-row align='center' justify='center' class='mt-1'>
+                <v-col cols='12' xs='10' sm='8' md='6' lg='4' xl='3'>
+                  <v-text-field
+                    :value='collections[shareIndex].id'
+                    readonly
+                    label='Referenznummer'
+                  >
+                    <template v-slot:append>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            color='primary'
+                            dark
+                            icon
+                            v-bind="attrs"
+                            v-on="on"
+                            class='ma-1'
+                            @click.stop='copyToClipboard(collections[shareIndex].id)'
+                          >
+                            <v-icon large>mdi-content-copy</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Kopieren</span>
+                      </v-tooltip>
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row align='center' justify='center'>
+                <v-col cols='12' xs='10' sm='8' md='6' lg='4' xl='3'>
+                  <v-text-field
+                    :value='`${previewRootUrl}${collections[shareIndex].id}`'
+                    readonly
+                    label='Vollständiger Link'
+                  >
+                    <template v-slot:append>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            color='primary'
+                            dark
+                            icon
+                            v-bind="attrs"
+                            v-on="on"
+                            class='ma-1'
+                            @click.stop='copyToClipboard(
+                              `${previewRootUrl}${collections[shareIndex].id}`
+                            )'
+                          >
+                            <v-icon large>mdi-content-copy</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Kopieren</span>
+                      </v-tooltip>
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-row align='center' justify='center' class='mt-2 mb-3'>
+                <v-btn
+                  color='error'
+                  dark
+                  text
+                  class='ma-1'
+                  @click='shareDialog = false'
+                >
+                  Schließen
+                </v-btn>
+              </v-row>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
@@ -176,6 +264,12 @@ import { getValidCreate } from '@/utils/InputCreator';
 
 @Component
 export default class Collections extends Vue {
+  shareDialog = false
+
+  shareIndex = 0
+
+  previewRootUrl = 'http://localhost:8080/collections/use/'
+
   get collections(): Collection[] {
     return this.$store.state.collections;
   }
@@ -207,7 +301,14 @@ export default class Collections extends Vue {
   }
 
   share(index: number): void {
+    this.shareIndex = index;
+    this.shareDialog = true;
     console.log('share ', this.collections[index].id);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text);
   }
 
   download(index: number): void {

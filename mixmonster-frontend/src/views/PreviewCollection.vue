@@ -50,7 +50,7 @@ const PreviewCollectionProps = Vue.extend({
 })
 export default class PreviewCollection extends PreviewCollectionProps {
   get collection(): Collection | undefined {
-    return this.$store.getters.getCollections(this.collectionId);
+    return this.$store.getters.getCollection(this.collectionId);
   }
 }
 </script>

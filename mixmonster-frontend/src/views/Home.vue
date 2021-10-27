@@ -3,7 +3,7 @@
     <v-main>
       <v-container>
         <v-row align='center' justify='center' class='mt-10 mb-10'>
-          <span class='text-h3'>
+          <span class='text-h3' align='center'>
             <strong>Willkommen beim MixMonster!</strong>
           </span>
         </v-row>
@@ -33,7 +33,7 @@
               </span>
             </v-row>
 
-            <v-row align='center' justify='center' class='mt-16'>
+            <v-row align='center' justify='center' class='mt-16 mb-16'>
               <v-col>
                 <v-row align='center' justify='center'>
                   <v-text-field

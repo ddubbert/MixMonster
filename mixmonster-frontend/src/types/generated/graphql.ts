@@ -94,6 +94,13 @@ export type GetCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCollectionsQuery = { __typename?: 'Query', getCollections: Array<{ __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title?: string | null | undefined, image?: string | null | undefined }> }> }> };
 
+export type GetCollectionQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetCollectionQuery = { __typename?: 'Query', getCollection: { __typename?: 'Collection', id: string, title: string, allowReRoll: boolean, categories: Array<{ __typename?: 'Category', title: string, selectable: boolean, criteriaRollAmount: number, criteria: Array<{ __typename?: 'Criteria', title?: string | null | undefined, image?: string | null | undefined }> }> } };
+
 export type CreateCollectionMutationVariables = Exact<{
   input: CollectionInput;
 }>;
@@ -135,6 +142,13 @@ export const CollectionData = gql`
 export const GetCollections = gql`
     query getCollections {
   getCollections {
+    ...collectionData
+  }
+}
+    ${CollectionData}`;
+export const GetCollection = gql`
+    query getCollection($id: String!) {
+  getCollection(id: $id) {
     ...collectionData
   }
 }
