@@ -138,7 +138,7 @@ export default class EditCollection extends EditProps {
   dialog = false;
 
   get collection(): Collection | undefined {
-    return this.$store.getters.getCollections(this.collectionId);
+    return this.$store.getters.getCollection(this.collectionId);
   }
 
   update(): void {

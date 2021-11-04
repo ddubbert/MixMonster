@@ -9,6 +9,7 @@
           </span>
           <v-spacer></v-spacer>
         </v-row>
+
         <v-row
           align='center'
           justify='center'
@@ -139,7 +140,7 @@
           <input
             style='display: none'
             type='file'
-            accept='text/csv'
+            accept='text/csv, .xls, .xlsx'
             ref='upload'
             @change='upload'
           >
@@ -257,9 +258,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import * as XLSX from 'sheetjs-style';
+import * as SHEETJS from 'xlsx';
 import Component from 'vue-class-component';
 import { Collection } from '@/types/generated/graphql';
-import CSVManager from '@/utils/CSVManager';
+import ExcelManager from '@/utils/ExcelManager';
 import { getValidCreate } from '@/utils/InputCreator';
 
 @Component
@@ -313,10 +316,16 @@ export default class Collections extends Vue {
 
   download(index: number): void {
     const collection = this.collections[index];
-    const manager = new CSVManager();
-    const csv = manager.createCSV(collection);
-    const exportedFilename = `${collection.title}.csv`;
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const workbook = ExcelManager.createWorkbookFor(collection);
+    const workbookOptions: XLSX.WritingOptions = {
+      bookType: 'xlsx',
+      bookSST: false,
+      type: 'array',
+    };
+    const workbookOutput = XLSX.write(workbook, workbookOptions);
+    const exportedFilename = `${collection.title}.xlsx`;
+    const blob = new Blob([workbookOutput], { type: 'application/octet-stream' });
+
     if (navigator.msSaveBlob) { // IE 10+
       navigator.msSaveBlob(blob, exportedFilename);
     } else {
@@ -331,21 +340,19 @@ export default class Collections extends Vue {
     }
   }
 
-  upload(event: Event): void {
+  async upload(event: Event): Promise<void> {
     if (event.target) {
       const target = event.target as HTMLInputElement;
-      if (target.files && target.files[0]) {
-        const manager = new CSVManager();
 
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-          const r = e.target?.result as string;
-          if (r) {
-            const collections = manager.createCollectionFrom(r);
-            collections.forEach((col) => { this.$store.dispatch('createCollection', col); });
-          }
-        };
-        fileReader.readAsText(target.files[0]);
+      if (target.files && target.files[0]) {
+        const file = target.files[0];
+        const data = await file.arrayBuffer();
+        const workbook = SHEETJS.read(data, { type: 'base64' });
+
+        const collections = ExcelManager.createCollectionFrom(workbook);
+        collections.forEach((col) => {
+          this.$store.dispatch('createCollection', getValidCreate(col));
+        });
       }
     }
   }
