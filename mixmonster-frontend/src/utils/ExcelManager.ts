@@ -137,9 +137,9 @@ export default class ExcelManager {
     return rows[0].map((a, i) => ({
       wch: Math.max(
         ...rows.map(
-          (a2, t) => (
-            a2[i] && a2[i].toString().length
-              ? (a2[i].toString().length + 2) * (rowFontSizes[t] / ExcelManager.DEFAULT_FONT_SIZE)
+          (row, t) => (
+            row[i] && row[i].toString().length
+              ? (row[i].toString().length + 2) * (rowFontSizes[t] / ExcelManager.DEFAULT_FONT_SIZE)
               : 10
           ),
         ),
@@ -256,18 +256,33 @@ export default class ExcelManager {
     };
   }
 
+  private static getCellBoundariesFor(worksheet: XLSX.WorkSheet): string {
+    const ref = worksheet['!ref'];
+    if (!ref) throw new Error('Datei kann nicht gelesen werden.');
+
+    const range = SHEETJS.utils.decode_range(ref);
+    const lastRowIndex = range.e.r;
+    const lastColIndex = range.e.c;
+    const endCell = SHEETJS.utils.encode_cell({ r: lastRowIndex, c: lastColIndex });
+
+    for (let index = 0; index <= lastRowIndex; index += 1) {
+      const startCell = SHEETJS.utils.encode_cell({ r: index, c: 0 });
+
+      if (worksheet[startCell] && worksheet[startCell].v === ExcelManager.COLLECTION_HEADERS[0]) {
+        return `${startCell}:${endCell}`;
+      }
+    }
+
+    throw new Error('Dateiinhalt ist falsch formatiert.');
+  }
+
   static createCollectionFrom(workbook: SHEETJS.WorkBook): Collection[] {
     return Object.entries(workbook.Sheets).reduce((acc, [, sheet]) => {
       const worksheet = { ...sheet };
       const ref = worksheet['!ref'];
       if (!ref) return acc;
 
-      const range = SHEETJS.utils.decode_range(ref);
-      const lastRowIndex = range.e.r;
-      const lastColIndex = range.e.c;
-      const startCell = SHEETJS.utils.encode_cell({ r: 2, c: 0 });
-      const endCell = SHEETJS.utils.encode_cell({ r: lastRowIndex, c: lastColIndex });
-      worksheet['!ref'] = `${startCell}:${endCell}`;
+      worksheet['!ref'] = ExcelManager.getCellBoundariesFor(worksheet);
 
       return [...acc, ExcelManager.getCollectionDataFrom(worksheet)];
     }, [] as Collection[]);
