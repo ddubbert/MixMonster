@@ -70,9 +70,31 @@
       </v-menu>
     </v-app-bar>
 
-    <v-main>
+    <v-main class='pt-10 pb-16 mb-16'>
       <router-view/>
     </v-main>
+
+    <v-footer
+      color="secondary"
+      padless
+      fixed
+    >
+      <v-row
+        justify="center"
+        no-gutters
+      >
+        <v-btn
+          v-for="link in links"
+          :key="link"
+          color="white"
+          text
+          rounded
+          class="my-2"
+        >
+          {{ link }}
+        </v-btn>
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 
@@ -82,6 +104,15 @@ import Component from 'vue-class-component';
 
 @Component
 export default class App extends Vue {
+  links = [
+    'Home',
+    'About Us',
+    'Team',
+    'Services',
+    'Blog',
+    'Contact Us',
+  ]
+
   logout(): void {
     this.$store.dispatch('logout', 'http://localhost:8080/');
   }
