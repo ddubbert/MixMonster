@@ -102,7 +102,7 @@
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        @click.stop='remove(index)'
+                        @click.stop='openRemoveDialogFor(index)'
                         icon
                         class='ml-1 mr-1'
                         v-bind="attrs"
@@ -118,6 +118,7 @@
             </v-card>
           </v-col>
         </v-row>
+
         <v-row align='center' justify='center' class='mt-5'>
           <v-spacer></v-spacer>
           <v-tooltip top>
@@ -163,6 +164,47 @@
           </v-tooltip>
           <v-spacer></v-spacer>
         </v-row>
+
+        <v-dialog
+          v-model="removeDialog"
+        >
+          <v-card>
+            <v-card-title class='text-h5 text-center'>
+              <v-spacer></v-spacer>
+              Sammlung wirklich löschen?
+              <v-spacer></v-spacer>
+            </v-card-title>
+
+            <v-card-text>
+              <v-row align='center' justify='center' class='text-center mt-1'>
+                Gelöschte Sammlungen können nicht wieder hergestellt werden.
+              </v-row>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-row align='center' justify='center' class='mt-2 mb-3'>
+                <v-btn
+                  color="primary"
+                  dark
+                  class='ma-1'
+                  @click="removeDialog = false"
+                >
+                  Löschvorgang abbrechen
+                </v-btn>
+
+                <v-btn
+                  color="error"
+                  dark
+                  text
+                  class='ma-1'
+                  @click="remove(removeIndex)"
+                >
+                  Endgültig löschen
+                </v-btn>
+              </v-row>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
         <v-dialog
           v-model="shareDialog"
@@ -269,6 +311,10 @@ import { getValidCreate } from '@/utils/InputCreator';
 export default class Collections extends Vue {
   shareDialog = false
 
+  removeDialog = false
+
+  removeIndex = 0
+
   shareIndex = 0
 
   previewRootUrl = 'http://localhost:8080/collections/use/'
@@ -301,12 +347,17 @@ export default class Collections extends Vue {
 
   remove(index: number): void {
     this.$store.dispatch('removeCollection', this.collections[index].id);
+    this.removeDialog = false;
+  }
+
+  openRemoveDialogFor(index: number): void {
+    this.removeIndex = index;
+    this.removeDialog = true;
   }
 
   share(index: number): void {
     this.shareIndex = index;
     this.shareDialog = true;
-    console.log('share ', this.collections[index].id);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -359,38 +410,12 @@ export default class Collections extends Vue {
 
   mounted(): void {
     if (!this.$keycloak.token) {
-      this.$keycloak.init({
-        onLoad: 'login-required',
-        redirectUri: 'http://localhost:8080/collections',
-      }).then((auth) => {
+      this.$store.dispatch('login', 'http://localhost:8080/collections').then((auth) => {
         if (!auth) {
           window.location.reload();
         } else {
           this.$store.dispatch('getCollections');
         }
-
-        // Token Refresh
-        setInterval(() => {
-          this.$keycloak.updateToken(70).then((refreshed) => {
-            if (refreshed) {
-              console.log(`Token refreshed ${refreshed}`);
-            } else if (this.$keycloak.tokenParsed?.exp && this.$keycloak.timeSkew) {
-              console.warn(`Token still valid for ${
-                Math.round(
-                  this.$keycloak.tokenParsed.exp
-                  + this.$keycloak.timeSkew
-                  - new Date().getTime()
-                  / 1000,
-                )
-              } seconds`);
-            }
-          }).catch(() => {
-            console.error('Failed to refresh token');
-          });
-        }, 6000);
-      }).catch((e) => {
-        console.log(e);
-        console.error('Authenticated Failed');
       });
     }
   }

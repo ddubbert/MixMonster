@@ -23,29 +23,21 @@ Vue.use(Vuex);
 
 export default function createStore(keycloak: Keycloak.KeycloakInstance):
   Store<{ collections: Collection[] }> {
+  let reloadTokenInterval = 0;
+
   const link = createHttpLink({
     uri: 'http://localhost:4000/graphql',
   });
 
-  const authLink = setContext((_, { headers }) => {
-    const { token } = keycloak;
-    return {
-      headers: {
-        ...headers,
-        authorization: token ? `Bearer ${token}` : '',
-      },
-    };
-  });
-
   const cache = new InMemoryCache();
 
-  const apolloClient = new ApolloClient({
-    link: authLink.concat(link),
+  let apolloClient = new ApolloClient({
     cache,
   });
 
   return new Vuex.Store({
     state: {
+      token: undefined as string | undefined,
       collections: [] as Collection[],
     },
     getters: {
@@ -75,7 +67,6 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
         state.collections.splice(0, state.collections.length, ...requestedCollections);
       },
       async getCollection({ state }, collectionId: string) {
-        console.log(collectionId, typeof collectionId);
         const requestedCollection = (await apolloClient
           .query<GetCollectionQuery>({
             query: GetCollection,
@@ -119,6 +110,63 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           })).data?.deleteCollection;
 
         if (deletedCollection) commit('deleteCollection', id);
+      },
+      async logout({ state }, redirectUri: string) {
+        clearInterval(reloadTokenInterval);
+        state.collections.splice(0);
+        state.token = undefined;
+        await keycloak.logout({ redirectUri });
+      },
+      async login({ state }, redirectUri: string) {
+        try {
+          const auth = await keycloak.init({
+            onLoad: 'login-required',
+            redirectUri,
+          });
+
+          if (auth) {
+            state.token = keycloak.token;
+            apolloClient = new ApolloClient({
+              link: setContext((_, { headers }) => {
+                const { token } = keycloak;
+                return {
+                  headers: {
+                    ...headers,
+                    authorization: token ? `Bearer ${token}` : '',
+                  },
+                };
+              }).concat(link),
+              cache,
+            });
+
+            reloadTokenInterval = setInterval(() => {
+              keycloak.updateToken(70)
+                .then((refreshed) => {
+                  if (refreshed) {
+                    console.log(`Token refreshed ${refreshed}`);
+                  } else if (keycloak.tokenParsed?.exp && keycloak.timeSkew) {
+                    console.warn(`Token still valid for ${
+                      Math.round(
+                        keycloak.tokenParsed.exp
+                        + keycloak.timeSkew
+                        - new Date().getTime()
+                        / 1000,
+                      )
+                    } seconds`);
+                  }
+                })
+                .catch(() => {
+                  console.error('Failed to refresh token');
+                });
+            }, 20000);
+          }
+
+          return auth;
+        } catch (e) {
+          console.log(e);
+          console.error('Authenticated Failed');
+          return false;
+        }
       },
     },
     modules: {},
