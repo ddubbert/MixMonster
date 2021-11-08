@@ -2,7 +2,19 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-row align='center' justify='center' class='mt-10 mb-10'>
+        <v-row align='center' justify='center'>
+          <v-col cols='8' xl='2' lg='2' md='4' sm='4' xs='8'  class='pa-5'>
+            <v-img
+              alt="MixMonster Logo"
+              class="shrink mr-2"
+              contain
+              src="@/assets/icon.png"
+              transition="scale-transition"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row align='center' justify='center' class='mb-5'>
           <span class='text-h3' align='center'>
             <strong>Willkommen beim MixMonster!</strong>
           </span>
@@ -10,13 +22,13 @@
 
         <v-row align='center' justify='center'>
           <v-col xl='4' lg='4' md='6' sm='8' xs='12'  class='pa-5'>
-            <v-row align='center' justify='center' class='mb-10 mt-10'>
+            <v-row align='center' justify='center' class='mb-5 mt-5'>
               <span class='text-h4'>
                 <strong>Du kannst</strong>
               </span>
             </v-row>
 
-            <v-row align='center' justify='center' class='mb-14'>
+            <v-row align='center' justify='center' class='mb-10'>
               <v-btn
                 to='collections'
                 class='ml-1 mr-1'
@@ -33,7 +45,7 @@
               </span>
             </v-row>
 
-            <v-row align='center' justify='center' class='mt-16 mb-16'>
+            <v-row align='center' justify='center' class='mt-10 mb-10'>
               <v-col>
                 <v-row align='center' justify='center'>
                   <v-text-field
