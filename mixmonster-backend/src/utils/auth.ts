@@ -11,7 +11,9 @@ const resolveUserFn: ResolveUserFn<UserType> = async context => {
     const token = context.req.headers.authorization;
     // @ts-ignore
     if(context.operation.name?.value === 'IntrospectionQuery') return { id: 'introspection', authId: 'introspection' };
-    if (!token) return null;
+    // @ts-ignore
+    else if(context.operation.name?.value === 'getCollection') return { id: 'getCollection', authId: 'getCollection' };
+    else if (!token) return null;
 
     const url = `${keycloak['auth-server-url']}realms/${keycloak.realm}/protocol/openid-connect/userinfo`;
     const config = {

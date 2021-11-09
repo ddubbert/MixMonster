@@ -7,6 +7,7 @@
     </v-row>
 
     <v-row
+      v-if='currentCollection'
       align='stretch'
       justify='center'
     >

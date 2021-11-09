@@ -16,7 +16,11 @@
 <!--        />-->
 
         <v-toolbar-title>
-          <span class='text-h4'>
+          <span
+            class='text-h4'
+            @click.stop="$router.push({ name: 'Home' })"
+            style='cursor: pointer'
+          >
             <strong>MixMonster</strong>
           </span>
         </v-toolbar-title>
