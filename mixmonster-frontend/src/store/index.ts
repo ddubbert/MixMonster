@@ -32,6 +32,7 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
   const cache = new InMemoryCache();
 
   let apolloClient = new ApolloClient({
+    link,
     cache,
   });
 
@@ -66,13 +67,20 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           .query<GetCollectionsQuery>({ query: GetCollections })).data.getCollections;
         state.collections.splice(0, state.collections.length, ...requestedCollections);
       },
-      async getCollection({ state }, collectionId: string) {
-        const requestedCollection = (await apolloClient
-          .query<GetCollectionQuery>({
-            query: GetCollection,
-            variables: { id: collectionId },
-          })).data.getCollection;
-        state.collections.push(requestedCollection);
+      async getCollection({ state }, collectionId: string): Promise<Collection | undefined> {
+        try {
+          const requestedCollection = (await apolloClient
+            .query<GetCollectionQuery>({
+              query: GetCollection,
+              variables: { id: collectionId },
+            })).data.getCollection;
+
+          state.collections.push(requestedCollection);
+          return requestedCollection;
+        } catch (e) {
+          console.log(e);
+          return undefined;
+        }
       },
       async createCollection(
         { commit },
