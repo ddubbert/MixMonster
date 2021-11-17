@@ -9,14 +9,14 @@ export default new Vuetify({
       light: {
         primary: '#b43092',
         secondary: '#323639',
-        accent: '#ea5a00',
+        accent: '#ec6b1a', // '#ea5a00',
         error: '#c81e0f',
         primary_light: '#ad4994',
       },
       dark: {
         primary: '#b43092',
         secondary: '#323639',
-        accent: '#ea5a00',
+        accent: '#ec6b1a', // '#ea5a00',
         error: '#c81e0f',
         primary_light: '#ad4994',
       },

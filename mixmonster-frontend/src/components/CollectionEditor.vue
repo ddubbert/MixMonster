@@ -137,7 +137,7 @@
                 <v-col class='pa-0'>
                   <v-expansion-panels multiple>
                     <v-row
-                      align='top'
+                      align='start'
                       class='ma-2 justify-sm-center justify-lg-start'
                     >
                       <v-col
