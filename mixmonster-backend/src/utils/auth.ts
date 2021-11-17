@@ -9,11 +9,7 @@ const resolveUserFn: ResolveUserFn<UserType> = async context => {
   try {
     // @ts-ignore
     const token = context.req.headers.authorization;
-    // @ts-ignore
-    if(context.operation.name?.value === 'IntrospectionQuery') return { id: 'introspection', authId: 'introspection' };
-    // @ts-ignore
-    else if(context.operation.name?.value === 'getCollection') return { id: 'getCollection', authId: 'getCollection' };
-    else if (!token) return null;
+    if (!token) return null;
 
     const url = `${keycloak['auth-server-url']}realms/${keycloak.realm}/protocol/openid-connect/userinfo`;
     const config = {
@@ -23,7 +19,6 @@ const resolveUserFn: ResolveUserFn<UserType> = async context => {
     };
 
     const userInfo = await axios.get(url, config);
-    console.log(userInfo.data);
 
     return { id: userInfo.data.sub };
   } catch (e) {
@@ -32,8 +27,11 @@ const resolveUserFn: ResolveUserFn<UserType> = async context => {
 };
 
 const validateUser: ValidateUserFn<UserType> = async (user, context) => {
-  console.log(user);
-  if (!user) {
+  if (!user
+    // @ts-ignore
+    && context.operation.name?.value !== 'IntrospectionQuery'
+    // @ts-ignore
+    && context.operation.name?.value !== 'getCollection') {
     throw new Error(`Unauthenticated!`);
   }
 };
