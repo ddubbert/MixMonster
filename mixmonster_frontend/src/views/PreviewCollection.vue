@@ -15,15 +15,15 @@
         </v-row>
 
         <v-row align='center' justify='center' class='mt-10 mb-5'>
-          <span class='text-h3' align='center' v-if='collection'>
+          <span class='text-h4 text-md-h3' align='center' v-if='collection'>
             Dein persönlicher
             <strong v-if='collection'>
               {{ collection.title }}
             </strong>
             Monster-Mix
           </span>
-          <span class='text-h3' align='center' v-else>
-            <strong>Sammlung nicht gefunden!</strong>
+          <span class='text-h4 text-md-h3' align='center' v-else>
+            <strong>MixMonster nicht gefunden!</strong>
           </span>
         </v-row>
       </v-container>

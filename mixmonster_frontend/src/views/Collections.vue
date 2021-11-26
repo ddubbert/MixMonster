@@ -16,8 +16,8 @@
 
         <v-row align='center' justify='center' class='mb-10'>
           <v-spacer></v-spacer>
-          <span class='text-h3' align='center'>
-            <strong>Deine Monster-Sammlungen:</strong>
+          <span class='text-h4 text-md-h3' align='center'>
+            <strong>Deine MixMonster:</strong>
           </span>
           <v-spacer></v-spacer>
         </v-row>
@@ -153,7 +153,7 @@
                 <v-icon x-large>mdi-plus-circle</v-icon>
               </v-btn>
             </template>
-            <span>Neue Sammlung erstellen</span>
+            <span>Neues MixMonster erstellen</span>
           </v-tooltip>
 
           <input
@@ -189,13 +189,13 @@
           <v-card>
             <v-card-title class='text-h5 text-center'>
               <v-spacer></v-spacer>
-              Sammlung wirklich löschen?
+              MixMonster wirklich löschen?
               <v-spacer></v-spacer>
             </v-card-title>
 
             <v-card-text>
               <v-row align='center' justify='center' class='text-center mt-1'>
-                Gelöschte Sammlungen können nicht wieder hergestellt werden.
+                Gelöschte MixMonster können nicht wieder hergestellt werden.
               </v-row>
             </v-card-text>
 
