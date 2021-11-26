@@ -11,7 +11,7 @@ export default class ExcelManager {
 
   private static readonly DEFAULT_FONT_SIZE = 12;
 
-  private static readonly COLLECTION_HEADERS = ['Sammlungs-Titel', 'Erneutes Würfeln gestatten?'];
+  private static readonly COLLECTION_HEADERS = ['MixMonster-Name', 'Erneutes Würfeln gestatten?'];
 
   private static readonly CATEGORY_HEADERS = [
     'Kategorie-Titel',
@@ -19,7 +19,11 @@ export default class ExcelManager {
     'Anzahl generierter Zufallskriterien',
   ];
 
-  private static readonly CRITERIA_HEADERS = ['Kriterien-Titel', 'Kriterien-Bilder'];
+  private static readonly CRITERIA_HEADERS = [
+    'Kriterien-Titel',
+    'Kriterien-Titel anzeigen',
+    'Kriterien-Bilder',
+  ];
 
   private static readonly SPACER = ['', ''];
 
@@ -32,14 +36,29 @@ export default class ExcelManager {
   private static readonly CRITERIA_SPACER : string[] =
     Array(ExcelManager.CRITERIA_HEADERS.length).fill('');
 
-  // private readonly KRITERIA_SPACER = ...Array(this._HEADERS.length - 1);
+  private static getReadableBoolean(bool: boolean): string {
+    return bool ? 'Ja' : 'Nein';
+  }
+
+  private static getBooleanFromReadable(readable: string | number): boolean {
+    return typeof readable === 'string' ? readable.toLowerCase() === 'ja' : readable > 0;
+  }
 
   private static getCriteriaValues(criteria: Criteria): string[] {
-    return [criteria.title || '', criteria.image || ''];
+    console.log(criteria.showTitle);
+    return [
+      criteria.title || '',
+      ExcelManager.getReadableBoolean(criteria.showTitle ?? true),
+      criteria.image || '',
+    ];
   }
 
   private static getCategoryValues(category: Category): (string | number)[] {
-    return [category.title, +category.selectable, category.criteriaRollAmount];
+    return [
+      category.title,
+      ExcelManager.getReadableBoolean(category.selectable),
+      category.criteriaRollAmount,
+    ];
   }
 
   private static getCategoryWhitespacesFor(categoryIndex: number) : string[] {
@@ -84,7 +103,12 @@ export default class ExcelManager {
       });
 
       return newAcc;
-    }, [[collection.title, +collection.allowReRoll]]);
+    }, [
+      [
+        collection.title,
+        ExcelManager.getReadableBoolean(collection.allowReRoll),
+      ] as (string | number)[],
+    ]);
   }
 
   private static createHeaderRowFor(collection: Collection): string[] {
@@ -106,7 +130,7 @@ export default class ExcelManager {
       ...ExcelManager.CATEGORY_SPACER.slice(0, -1),
       ...ExcelManager.CRITERIA_SPACER,
     ], [
-      'Sammlung',
+      'MixMonster',
       ...Array(ExcelManager.COLLECTION_HEADERS.length - 1).fill(''),
     ]);
   }
@@ -202,7 +226,7 @@ export default class ExcelManager {
     XLSX.utils.book_append_sheet(
       workBook,
       ExcelManager.createCollectionSheet(collection),
-      `Sammlung - ${collection.title}`,
+      'MixMonster',
     );
 
     return workBook;
@@ -218,17 +242,21 @@ export default class ExcelManager {
     return [...Array(amountCategories)].map((val, index) => {
       const append = index === 0 ? '' : `_${index}`;
       const title = jsonWorksheet[0][`${ExcelManager.CATEGORY_HEADERS[0]}${append}`];
-      const selectable = !!jsonWorksheet[0][`${ExcelManager.CATEGORY_HEADERS[1]}${append}`];
+      const selectable = ExcelManager
+        .getBooleanFromReadable(jsonWorksheet[0][`${ExcelManager.CATEGORY_HEADERS[1]}${append}`]);
       const criteriaRollAmount = jsonWorksheet[0][`${ExcelManager.CATEGORY_HEADERS[2]}${append}`];
 
       const initial: Criteria[] = [];
       const criteria: Criteria[] = jsonWorksheet.reduce((acc, sheet) => {
         const critTitle = sheet[`${ExcelManager.CRITERIA_HEADERS[0]}${append}`];
-        const critImage = sheet[`${ExcelManager.CRITERIA_HEADERS[1]}${append}`];
+        const critTitleShow = ExcelManager
+          .getBooleanFromReadable(sheet[`${ExcelManager.CRITERIA_HEADERS[1]}${append}`]);
+        const critImage = sheet[`${ExcelManager.CRITERIA_HEADERS[2]}${append}`];
 
-        if (!critTitle && !critImage) return acc;
+        if (!critTitle && !critTitleShow && !critImage) return acc;
 
         return [...acc, {
+          showTitle: critTitleShow,
           title: typeof critTitle === 'string' ? critTitle : '',
           image: typeof critImage === 'string' ? critImage : '',
         }];
@@ -246,7 +274,8 @@ export default class ExcelManager {
   private static getCollectionDataFrom(worksheet: XLSX.WorkSheet): Collection {
     const jsonWorksheet: JsonMap[] = SHEETJS.utils.sheet_to_json(worksheet);
     const title = jsonWorksheet[0][ExcelManager.COLLECTION_HEADERS[0]];
-    const allowReRoll = !!jsonWorksheet[0][ExcelManager.COLLECTION_HEADERS[1]];
+    const allowReRoll = ExcelManager
+      .getBooleanFromReadable(jsonWorksheet[0][ExcelManager.COLLECTION_HEADERS[1]]);
 
     return {
       id: '',

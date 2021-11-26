@@ -15,7 +15,7 @@
         </v-row>
 
         <v-row align='center' justify='center' class='mb-5'>
-          <span class='text-h3' align='center'>
+          <span class='text-h4 text-md-h3' align='center'>
             <strong>Willkommen beim MixMonster!</strong>
           </span>
         </v-row>
@@ -23,7 +23,7 @@
         <v-row align='center' justify='center'>
           <v-col xl='4' lg='4' md='6' sm='8' xs='12'  class='pa-5'>
             <v-row align='center' justify='center' class='mb-5 mt-5'>
-              <span class='text-h4'>
+              <span class='text-h5 text-md-h4'>
                 <strong>Du kannst</strong>
               </span>
             </v-row>
@@ -35,12 +35,12 @@
                 color='primary'
                 x-large
               >
-                Zur MixMonster Verwaltung
+                MixMonster verwalten
               </v-btn>
             </v-row>
 
             <v-row align='center' justify='center'>
-              <span class='text-h4'>
+              <span class='text-h5 text-md-h4'>
                 <strong>oder</strong>
               </span>
             </v-row>
@@ -63,7 +63,7 @@
                     color='primary'
                     x-large
                   >
-                    Ein MixMonster nutzen
+                    MixMonster nutzen
                   </v-btn>
                 </v-row>
               </v-col>

@@ -5,14 +5,14 @@
         <v-text-field
           outlined
           v-model='collection.title'
-          label='Sammlungsname'
+          label='Name des MixMonsters'
           clearable
-          class='text-h5'
+          class='text-h6 text-md-h5'
           :rules="[
             () => !!collection.title
               && collection.title.length >= 1
               && collection.title.trim().length >= 1
-              || `Es muss ein Name für die Sammlung vergeben werden!`,
+              || `Das MixMonster muss einen Namen haben!`,
           ]"
         >
         </v-text-field>
@@ -55,7 +55,9 @@
                 <v-icon x-large color='white'>mdi-menu-down</v-icon>
               </template>
 
-              <span class='text-h5 white--text'><strong>{{ category.title }}</strong></span>
+              <span class='text-h6 text-md-h5 white--text'>
+                <strong>{{ category.title }}</strong>
+              </span>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content
@@ -94,7 +96,7 @@
                             mdi-message-question-outline
                           </v-icon>
                         </template>
-                        Nutzer der Sammlung können mögliche Kriterien dieser Kategorie vor einem
+                        Nutzer des MixMonsters können mögliche Kriterien dieser Kategorie vor einem
                         MonsterMix eingrenzen bzw. eine Vorauswahl tätigen.
                       </v-tooltip>
                     </div>
@@ -170,7 +172,9 @@
                               </v-col>
 
                               <v-col>
-                                <span class='text-h6 white--text' v-if='criteria.showTitle'>
+                                <span v-if='criteria.showTitle'
+                                      class='text-subtitle-1 text-md-h6 white--text'
+                                >
                                   <strong>{{ criteria.title }}</strong>
                                 </span>
                               </v-col>
@@ -208,14 +212,13 @@
                                       <v-icon
                                         v-model="criteria.showTitle"
                                         :color='criteria.showTitle ? "accent" : "gray"'
-                                        class='ml-2'
                                         v-on='on'
                                         @click.stop='criteria.showTitle = !criteria.showTitle'
                                       >
                                         {{ criteria.showTitle ? 'mdi-eye' : 'mdi-eye-off' }}
                                       </v-icon>
                                     </template>
-                                    Titel für Nutzer der Sammlung anzeigen?<br>
+                                    Titel für Nutzer des MixMonsters anzeigen?<br>
                                     Wird dies ausgeschaltet, ist nur das Bild sichtbar.
                                   </v-tooltip>
                                 </template>
@@ -230,7 +233,7 @@
                               <v-text-field
                                 v-model='criteria.image'
                                 label='Bild URL'
-                                prepend-icon='mdi-camera'
+                                append-outer-icon='mdi-camera'
                                 clearable
                                 color='accent'
                               >

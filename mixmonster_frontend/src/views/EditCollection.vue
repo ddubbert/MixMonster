@@ -3,9 +3,9 @@
     <v-main>
       <v-container>
         <v-row align='center' justify='center' class='mt-10 mb-10'>
-          <span class='text-h3' align='center'>
+          <span class='text-h4 text-md-h3' align='center'>
             <strong v-if='collection'>{{ collection.title }} bearbeiten:</strong>
-            <strong v-else class='myHeading'>Sammlung nicht gefunden!</strong>
+            <strong v-else class='myHeading'>MixMonster nicht gefunden!</strong>
           </span>
         </v-row>
       </v-container>
@@ -92,7 +92,7 @@
                   class='ma-1'
                   @click="dialog = false"
                 >
-                  Bearbeitung fortsetzen
+                  Weiter bearbeiten
                 </v-btn>
 
                 <v-btn

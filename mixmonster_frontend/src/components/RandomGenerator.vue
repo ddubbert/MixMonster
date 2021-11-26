@@ -15,11 +15,12 @@
           x-large
           light
           :loading='!generationPossible'
+          :disabled='rollCount > 0 && !currentCollection.allowReRoll'
           color='accent'
           :style='{ border: `${rollCount > 0 ? primary : accent} solid 5px !important` }'
         >
-          <strong class='mixButton'>
-            {{ reRollAllowed ? 'Mix It!' : 'Bereits gemixt!' }}
+          <strong class='text-h5 text-md-h3'>
+            {{ reRollAllowed ? 'Mix It!' : '...' }}
           </strong>
         </v-btn>
 
@@ -296,9 +297,15 @@ export default class RandomGenerator extends RandomGeneratorProps {
     return this.rollCount === 0 || this.currentCollection.allowReRoll;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   copyToClipboard(): void {
-    navigator.clipboard.writeText('Hallo ich bin cool');
+    const base = `Dein ${this.currentCollection.title} MonsterMix:`;
+    const selection = this.randomSelection.reduce((acc, randomCriteria, index) => {
+      const criteriaString = randomCriteria.map((it) => it.title).join(', ');
+      return `${acc}
+
+        ${this.currentCollection.categories[index].title} - ${criteriaString}`;
+    }, base);
+    navigator.clipboard.writeText(selection);
   }
 
   changeWholeSelectionFor(categoryIndex: number): void {

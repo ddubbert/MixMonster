@@ -3,8 +3,8 @@
     <v-main>
       <v-container>
         <v-row align='center' justify='center' class='mt-10 mb-10'>
-          <span class='text-h3' align='center'>
-            <strong>Neue Sammlung erstellen:</strong>
+          <span class='text-h4 text-md-h3' align='center'>
+            <strong>Neues MixMonster erstellen:</strong>
           </span>
         </v-row>
       </v-container>
@@ -114,7 +114,7 @@ export default class CreateCollection extends Vue {
   collection : Collection = {
     id: '0',
     allowReRoll: true,
-    title: 'Sammlung',
+    title: 'MixMonster',
     categories: [
       {
         title: 'Kategorie',
