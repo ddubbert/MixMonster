@@ -117,7 +117,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import CollectionEditor, { CollectionEditorType } from '@/components/CollectionEditor.vue';
-import { Category, Collection } from '@/types/generated/graphql';
+import { Collection } from '@/types/generated/graphql';
 import { getValidUpdate } from '@/utils/InputCreator';
 
 const EditProps = Vue.extend({

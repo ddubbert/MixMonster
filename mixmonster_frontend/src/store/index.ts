@@ -4,7 +4,6 @@ import Keycloak from 'keycloak-js';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import {
-  Category,
   Collection,
   CreateCollection,
   CreateCollectionMutation,
@@ -26,9 +25,9 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
   Store<{ collections: Collection[] }> {
   let reloadTokenInterval = 0;
 
-  console.log(process.env.VUE_APP_BACKEND_URL);
+  console.log(process.env.VUE_APP_FRONTEND_URL, 'hallo');
   const link = createHttpLink({
-    uri: process.env.VUE_APP_BACKEND_URL,
+    uri: `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/graphql`,
   });
 
   const cache = new InMemoryCache();

@@ -55,7 +55,7 @@
                 <v-icon x-large color='white'>mdi-menu-down</v-icon>
               </template>
 
-              <span class='text-h6 text-md-h5 white--text'>
+              <span class='text-h6 text-md-h5 white--text text-break'>
                 <strong>{{ category.title }}</strong>
               </span>
             </v-expansion-panel-header>
@@ -173,7 +173,7 @@
 
                               <v-col>
                                 <span v-if='criteria.showTitle'
-                                      class='text-subtitle-1 text-md-h6 white--text'
+                                      class='text-subtitle-1 text-md-h6 white--text text-break'
                                 >
                                   <strong>{{ criteria.title }}</strong>
                                 </span>
@@ -256,41 +256,18 @@
                             </v-row>
                             <v-row
                               align='center'
-                              justify='center'
+                              justify='end'
                               class='mt-1'
                             >
-                              <v-tooltip top v-if='criteria.image'>
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    @click='removeImage(categoryIndex, criteriaIndex)'
-                                    icon
-                                    class='ml-1 mr-1'
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    color='error'
-                                    x-large
-                                  >
-                                    <v-icon large>mdi-camera-off</v-icon>
-                                  </v-btn>
-                                </template>
-                                <span>Bild entfernen</span>
-                              </v-tooltip>
-                              <v-tooltip top>
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    @click='deleteCriteria(categoryIndex, criteriaIndex)'
-                                    icon
-                                    class='ml-1 mr-1'
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    color='error'
-                                    x-large
-                                  >
-                                    <v-icon x-large>mdi-delete-forever</v-icon>
-                                  </v-btn>
-                                </template>
-                                <span>Löschen</span>
-                              </v-tooltip>
+                              <v-btn
+                                @click='deleteCriteria(categoryIndex, criteriaIndex)'
+                                text
+                                class='ml-1 mr-1'
+                                color='error'
+                                x-large
+                              >
+                                Kriterium Löschen
+                              </v-btn>
                             </v-row>
                           </v-expansion-panel-content>
                         </v-expansion-panel>
