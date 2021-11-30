@@ -380,7 +380,7 @@ export default class Collections extends Vue {
 
   qrValue = ''
 
-  previewRootUrl = 'http://localhost:8080/collections/use/'
+  previewRootUrl = `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections/use/`
 
   get collections(): Collection[] {
     return this.$store.state.collections;
@@ -486,7 +486,10 @@ export default class Collections extends Vue {
 
   mounted(): void {
     if (!this.$keycloak.token) {
-      this.$store.dispatch('login', 'http://localhost:8080/collections').then((auth) => {
+      this.$store.dispatch(
+        'login',
+        `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections/use/`,
+      ).then((auth) => {
         if (!auth) {
           window.location.reload();
         } else {

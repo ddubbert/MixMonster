@@ -85,7 +85,9 @@
                 </v-tooltip>
               </template>
 
-              <span class='text-h5 white--text'><strong>{{ category.title }}</strong></span>
+              <span class='text-h5 white--text text-break'>
+                <strong>{{ category.title }}</strong>
+              </span>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content
@@ -103,7 +105,7 @@
                 >
                   <v-list-item-content>
                     <v-list-item-title
-                      class='text-h6'
+                      class='text-h6 text-break'
                       v-text='category.selectable
                         ? "Deine Vorauswahl"
                         : "Kriterien dieser Kategorie"'
@@ -155,7 +157,8 @@
 
                   <v-list-item-content>
                     <v-list-item-title v-if='criteria.showTitle'
-                                       v-text='criteria.title'>
+                                       v-text='criteria.title'
+                                       class='text-break'>
                     </v-list-item-title>
                   </v-list-item-content>
 
@@ -193,7 +196,8 @@
 
                   <v-list-item-content>
                     <v-list-item-title v-if='criteria.showTitle'
-                                       v-text='criteria.title'>
+                                       v-text='criteria.title'
+                                       class='text-break'>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>

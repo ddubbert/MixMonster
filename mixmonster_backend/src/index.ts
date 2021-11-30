@@ -71,9 +71,9 @@ const start = async () => {
     },
   });
 
-  app.listen(process.env.APP_PORT, '0.0.0.0', (_, address) => {
+  app.listen(process.env.BACKEND_PORT, '0.0.0.0', (_, address) => {
     console.log(address);
-    console.log(`GraphQL server is running on: http://localhost:${process.env.APP_PORT}/graphql`);
+    console.log(`GraphQL server is running on: http://localhost:${process.env.BACKEND_PORT}/graphql`);
   });
 };
 
