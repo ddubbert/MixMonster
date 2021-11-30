@@ -486,6 +486,7 @@ export default class Collections extends Vue {
 
   mounted(): void {
     if (!this.$keycloak.token) {
+      console.log(`http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections/use/`);
       this.$store.dispatch(
         'login',
         `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections/use/`,
