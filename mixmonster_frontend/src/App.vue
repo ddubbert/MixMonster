@@ -118,7 +118,10 @@ export default class App extends Vue {
   ]
 
   logout(): void {
-    this.$store.dispatch('logout', 'http://localhost:8080/');
+    this.$store.dispatch(
+      'logout',
+      `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}`,
+    );
   }
 }
 </script>
