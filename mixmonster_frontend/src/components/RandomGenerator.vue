@@ -222,6 +222,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Collection, Criteria } from '@/types/generated/graphql';
+import { copyToClipboard as copy } from '@/utils/ClipboardManager';
 
 const RandomGeneratorProps = Vue.extend({
   props: {
@@ -301,15 +302,20 @@ export default class RandomGenerator extends RandomGeneratorProps {
     return this.rollCount === 0 || this.currentCollection.allowReRoll;
   }
 
-  copyToClipboard(): void {
-    const base = `Dein ${this.currentCollection.title} MonsterMix:`;
-    const selection = this.randomSelection.reduce((acc, randomCriteria, index) => {
-      const criteriaString = randomCriteria.map((it) => it.title).join(', ');
-      return `${acc}
+  async copyToClipboard(): Promise<void> {
+    try {
+      const base = `Dein ${this.currentCollection.title} MonsterMix:`;
+      const selection = this.randomSelection.reduce((acc, randomCriteria, index) => {
+        const criteriaString = randomCriteria.map((it) => it.title).join(', ');
+        return `${acc}
 
         ${this.currentCollection.categories[index].title} - ${criteriaString}`;
-    }, base);
-    navigator.clipboard.writeText(selection);
+      }, base);
+
+      await copy(selection);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   changeWholeSelectionFor(categoryIndex: number): void {

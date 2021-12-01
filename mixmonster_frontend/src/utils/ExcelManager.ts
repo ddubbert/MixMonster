@@ -45,7 +45,6 @@ export default class ExcelManager {
   }
 
   private static getCriteriaValues(criteria: Criteria): string[] {
-    console.log(criteria.showTitle);
     return [
       criteria.title || '',
       ExcelManager.getReadableBoolean(criteria.showTitle ?? true),
