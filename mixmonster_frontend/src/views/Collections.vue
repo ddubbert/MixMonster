@@ -288,7 +288,7 @@
                                 class='ma-1'
                                 @click.stop='copyToClipboard(
                               `${previewRootUrl}${collections[shareIndex].id}`
-                            )'
+                                )'
                               >
                                 <v-icon large>mdi-content-copy</v-icon>
                               </v-btn>
@@ -397,6 +397,7 @@ export default class Collections extends Vue {
   // eslint-disable-next-line class-methods-use-this
   async copyToClipboard(text: string): Promise<void> {
     try {
+      console.log(text);
       await copy(text);
     } catch (e) {
       console.log(e);
