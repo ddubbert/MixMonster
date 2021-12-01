@@ -14,6 +14,7 @@
               && collection.title.trim().length >= 1
               || `Das MixMonster muss einen Namen haben!`,
           ]"
+          @blur='checkTitle()'
         >
         </v-text-field>
       </v-col>
@@ -79,6 +80,7 @@
                         && category.title.trim().length >= 1
                         || `Es muss ein Name für die Kategorie vergeben werden!`,
                     ]"
+                    @blur='checkCategoryTitle(categoryIndex)'
                   >
                   </v-text-field>
                 </v-col>
@@ -116,6 +118,7 @@
                             || `Zahl muss mindestens 1 und maximal die Anzahl der Kriterien sein!`,
                         ]"
                         type='number'
+                        @blur='checkCriteriaRollAmount(categoryIndex)'
                       />
                     </v-col>
 
@@ -196,7 +199,7 @@
                               <v-text-field
                                 required
                                 v-model='criteria.title'
-                                label='Kriterium'
+                                label='Name des Kriteriums'
                                 clearable
                                 color='accent'
                                 :rules="[
@@ -205,6 +208,7 @@
                                     && criteria.title.trim().length >= 1
                                     || `Es muss ein Name für Kriterien vergeben werden!`,
                                 ]"
+                                @blur='checkCriteriaTitle(categoryIndex, criteriaIndex)'
                               >
                                 <template v-slot:append-outer>
                                   <v-tooltip top>
@@ -384,6 +388,38 @@ export default class CollectionEditor extends EditorProps {
       case 'lg': return 150;
       case 'xl': return 200;
       default: return 150;
+    }
+  }
+
+  checkTitle(): void {
+    const { title } = this.collection;
+
+    if (!title || title.trim().length === 0) this.collection.title = 'MixMonster';
+  }
+
+  checkCategoryTitle(catIndex: number): void {
+    const { title } = this.collection.categories[catIndex];
+
+    if (!title || title.trim().length === 0) {
+      this.collection.categories[catIndex].title = `Kategorie ${catIndex + 1}`;
+    }
+  }
+
+  checkCriteriaRollAmount(catIndex: number): void {
+    const criteriaAmount = this.collection.categories[catIndex].criteria.length;
+
+    if (!this.collection.categories[catIndex].criteriaRollAmount
+      || this.collection.categories[catIndex].criteriaRollAmount <= 0
+      || this.collection.categories[catIndex].criteriaRollAmount > criteriaAmount) {
+      this.collection.categories[catIndex].criteriaRollAmount = 1;
+    }
+  }
+
+  checkCriteriaTitle(catIndex: number, critIndex: number): void {
+    const { title } = this.collection.categories[catIndex].criteria[critIndex];
+
+    if (!title || title.trim().length === 0) {
+      this.collection.categories[catIndex].criteria[critIndex].title = `Kriterium ${critIndex + 1}`;
     }
   }
 

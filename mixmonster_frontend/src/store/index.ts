@@ -25,7 +25,6 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
   Store<{ collections: Collection[] }> {
   let reloadTokenInterval = 0;
 
-  console.log(process.env.VUE_APP_FRONTEND_URL, 'hallo');
   const link = createHttpLink({
     uri: `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/graphql`,
   });
@@ -79,7 +78,6 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           state.collections.push(requestedCollection);
           return requestedCollection;
         } catch (e) {
-          console.log(e);
           return undefined;
         }
       },
@@ -172,7 +170,6 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
 
           return auth;
         } catch (e) {
-          console.log(e);
           console.error('Authenticated Failed');
           return false;
         }

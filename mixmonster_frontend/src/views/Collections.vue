@@ -361,6 +361,7 @@ import QrcodeVue from 'qrcode.vue';
 import { Collection } from '@/types/generated/graphql';
 import ExcelManager from '@/utils/ExcelManager';
 import { getValidCreate } from '@/utils/InputCreator';
+import { copyToClipboard as copy } from '@/utils/ClipboardManager';
 
 @Component({
   components: {
@@ -393,8 +394,16 @@ export default class Collections extends Vue {
     return height < width ? height / 1.5 : width / 1.5;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  async copyToClipboard(text: string): Promise<void> {
+    try {
+      await copy(text);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   zoomQr(value: string): void {
-    console.log('penis2');
     this.qrValue = value;
     this.qrOverlay = true;
   }
@@ -434,11 +443,6 @@ export default class Collections extends Vue {
   share(index: number): void {
     this.shareIndex = index;
     this.shareDialog = true;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  copyToClipboard(text: string): void {
-    navigator.clipboard.writeText(text);
   }
 
   download(index: number): void {
