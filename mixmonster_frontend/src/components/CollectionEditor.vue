@@ -432,7 +432,10 @@ export default class CollectionEditor extends EditorProps {
   }
 
   addCriteria(categoryIndex: number): void {
-    this.collection.categories[categoryIndex].criteria.push({ title: 'Kriterium' });
+    this.collection.categories[categoryIndex].criteria.push({
+      showTitle: true,
+      title: `Kriterium ${this.collection.categories[categoryIndex].criteria.length + 1}`,
+    });
   }
 
   deleteCriteria(categoryIndex: number, criteriaIndex: number): void {
