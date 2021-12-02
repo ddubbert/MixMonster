@@ -245,6 +245,7 @@
                         readonly
                         label='Referenznummer'
                         class='pt-0'
+                        ref='idInput'
                       >
                         <template v-slot:append>
                           <v-tooltip top>
@@ -256,7 +257,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 class='ma-1'
-                                @click.stop='copyToClipboard(collections[shareIndex].id)'
+                                @click.stop='copyToClipboard("idInput")'
                               >
                                 <v-icon large>mdi-content-copy</v-icon>
                               </v-btn>
@@ -275,6 +276,7 @@
                         readonly
                         label='Vollständiger Link'
                         class='pt-0'
+                        ref='linkInput'
                       >
                         <template v-slot:append>
                           <v-tooltip top>
@@ -286,9 +288,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 class='ma-1'
-                                @click.stop='copyToClipboard(
-                              `${previewRootUrl}${collections[shareIndex].id}`
-                                )'
+                                @click.stop='copyToClipboard("linkInput")'
                               >
                                 <v-icon large>mdi-content-copy</v-icon>
                               </v-btn>
@@ -361,7 +361,6 @@ import QrcodeVue from 'qrcode.vue';
 import { Collection } from '@/types/generated/graphql';
 import ExcelManager from '@/utils/ExcelManager';
 import { getValidCreate } from '@/utils/InputCreator';
-import { copyToClipboard as copy } from '@/utils/ClipboardManager';
 
 @Component({
   components: {
@@ -394,14 +393,15 @@ export default class Collections extends Vue {
     return height < width ? height / 1.5 : width / 1.5;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async copyToClipboard(text: string): Promise<void> {
-    try {
-      console.log(text);
-      await copy(text);
-    } catch (e) {
-      console.log(e);
-    }
+  async copyToClipboard(refName: string): Promise<void> {
+    const vTextField = this.$refs[refName];
+    if (!vTextField || !(vTextField instanceof Vue)) return;
+
+    const input = (vTextField as Vue).$el.querySelector('input');
+    if (!input) return;
+
+    input.select();
+    document.execCommand('copy');
   }
 
   zoomQr(value: string): void {
