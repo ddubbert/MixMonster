@@ -33,7 +33,6 @@ const start = async () => {
     method: ['GET', 'POST'],
     url: '/graphql',
     async handler(req, res) {
-      console.log('request incoming');
       const { parse, validate, contextFactory, execute, schema } = getEnveloped({ req, db });
       const request = {
         body: req.body,
