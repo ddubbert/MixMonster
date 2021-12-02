@@ -109,12 +109,9 @@ import Component from 'vue-class-component';
 @Component
 export default class App extends Vue {
   links = [
-    'Home',
-    'About Us',
-    'Team',
-    'Services',
-    'Blog',
-    'Contact Us',
+    'Impressum',
+    'Datenschutz',
+    'Verbundpartner',
   ]
 
   logout(): void {
