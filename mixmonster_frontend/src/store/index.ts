@@ -36,10 +36,13 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
     cache,
   });
 
+  let errorTimeout: number | undefined;
+
   return new Vuex.Store({
     state: {
       token: undefined as string | undefined,
       collections: [] as Collection[],
+      error: '',
     },
     getters: {
       getCollection: (state) => (collectionId: string): Collection | undefined => state
@@ -60,14 +63,28 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           .indexOf(id);
         state.collections.splice(index, 1);
       },
+      activateError(state, text: string) {
+        clearTimeout(errorTimeout);
+        state.error = text;
+        errorTimeout = setTimeout(() => {
+          state.error = '';
+        }, 10000);
+      },
     },
     actions: {
-      async getCollections({ state }) {
-        const requestedCollections = (await apolloClient
-          .query<GetCollectionsQuery>({ query: GetCollections })).data.getCollections;
-        state.collections.splice(0, state.collections.length, ...requestedCollections);
+      async getCollections({ state, commit }) {
+        try {
+          const requestedCollections = (await apolloClient
+            .query<GetCollectionsQuery>({ query: GetCollections })).data.getCollections;
+          state.collections.splice(0, state.collections.length, ...requestedCollections);
+        } catch {
+          commit('activateError', 'Datenserver ist nicht erreichbar.');
+        }
       },
-      async getCollection({ state }, collectionId: string): Promise<Collection | undefined> {
+      async getCollection(
+        { state, commit },
+        collectionId: string,
+      ): Promise<Collection | undefined> {
         try {
           const requestedCollection = (await apolloClient
             .query<GetCollectionQuery>({
@@ -78,6 +95,7 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
           state.collections.push(requestedCollection);
           return requestedCollection;
         } catch (e) {
+          commit('activateError', 'MixMonster nicht gefunden.');
           return undefined;
         }
       },
@@ -85,38 +103,50 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
         { commit },
         variables: CreateCollectionMutationVariables,
       ) {
-        const createdCollection = (await apolloClient
-          .mutate<CreateCollectionMutation>({
-            mutation: CreateCollection,
-            variables,
-          })).data?.createCollection;
+        try {
+          const createdCollection = (await apolloClient
+            .mutate<CreateCollectionMutation>({
+              mutation: CreateCollection,
+              variables,
+            })).data?.createCollection;
 
-        if (createdCollection) {
-          commit('addCollection', createdCollection);
+          if (createdCollection) {
+            commit('addCollection', createdCollection);
+          }
+        } catch {
+          commit('activateError', 'Erstellung des MixMonsters fehlgeschlagen.');
         }
       },
       async updateCollection(
         { commit },
         variables: UpdateCollectionMutationVariables,
       ) {
-        const updatedCollection = (await apolloClient
-          .mutate<UpdateCollectionMutation>({
-            mutation: UpdateCollection,
-            variables,
-          })).data?.updateCollection;
+        try {
+          const updatedCollection = (await apolloClient
+            .mutate<UpdateCollectionMutation>({
+              mutation: UpdateCollection,
+              variables,
+            })).data?.updateCollection;
 
-        if (updatedCollection) {
-          commit('updateCollection', updatedCollection);
+          if (updatedCollection) {
+            commit('updateCollection', updatedCollection);
+          }
+        } catch {
+          commit('activateError', 'Aktualisierung des MixMonsters fehlgeschlagen.');
         }
       },
       async removeCollection({ commit }, id: string) {
-        const deletedCollection = (await apolloClient
-          .mutate<DeleteCollectionMutation>({
-            mutation: DeleteCollection,
-            variables: { id },
-          })).data?.deleteCollection;
+        try {
+          const deletedCollection = (await apolloClient
+            .mutate<DeleteCollectionMutation>({
+              mutation: DeleteCollection,
+              variables: { id },
+            })).data?.deleteCollection;
 
-        if (deletedCollection) commit('deleteCollection', id);
+          if (deletedCollection) commit('deleteCollection', id);
+        } catch {
+          commit('activateError', 'Entfernen des MixMonsters fehlgeschlagen.');
+        }
       },
       async logout({ state }, redirectUri: string) {
         clearInterval(reloadTokenInterval);
@@ -124,7 +154,7 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
         state.token = undefined;
         await keycloak.logout({ redirectUri });
       },
-      async login({ state }, redirectUri: string) {
+      async login({ state, commit }, redirectUri: string) {
         try {
           const auth = await keycloak.init({
             onLoad: 'login-required',
@@ -170,7 +200,7 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
 
           return auth;
         } catch (e) {
-          console.error('Authenticated Failed');
+          commit('activateError', 'Login fehlgeschlagen.');
           return false;
         }
       },

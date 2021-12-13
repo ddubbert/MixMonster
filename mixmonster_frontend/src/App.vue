@@ -4,6 +4,7 @@
       app
       color="secondary"
       dark
+      ref="appBar"
     >
       <div class="d-flex align-center ml-2">
 <!--        <v-img-->
@@ -74,6 +75,16 @@
       </v-menu>
     </v-app-bar>
 
+    <v-alert
+      v-if='!!$store.state.error'
+      border='top'
+      type='error'
+      class='ma-0'
+      :style='`position: fixed; top: ${barHeight}px; width: 100%; z-index: 100; border-radius: 0px`'
+    >
+      {{ $store.state.error }}
+    </v-alert>
+
     <v-main class='pt-10 pb-16 mb-16'>
       <router-view/>
     </v-main>
@@ -113,6 +124,13 @@ export default class App extends Vue {
     'Datenschutz',
     'Verbundpartner',
   ]
+
+  barHeight = 0;
+
+  mounted(): void {
+    const ref = this.$refs.appBar;
+    this.barHeight = ref ? (ref as Vue).$el.clientHeight : 0;
+  }
 
   logout(): void {
     this.$store.dispatch(

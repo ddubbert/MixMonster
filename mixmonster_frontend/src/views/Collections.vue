@@ -496,7 +496,8 @@ export default class Collections extends Vue {
         `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections`,
       ).then((auth) => {
         if (!auth) {
-          window.location.reload();
+          // window.location.reload();
+          this.$router.push('Home');
         } else {
           this.$store.dispatch('getCollections');
         }
