@@ -395,7 +395,7 @@ export default class RandomGenerator extends RandomGeneratorProps {
       .map((category) => [...Array(category.criteriaRollAmount)].map(() => ({
         showTitle: false,
         title: '',
-        image: 'https://i.pinimg.com/474x/2e/9d/dd/2e9dddaac786be790c35db3587469350.jpg',
+        image: `${this.$store.state.rootUrl}/mixmonster_question.png`,
       })));
     this.randomSelection.splice(0, this.randomSelection.length);
     this.randomSelection.push(...emptySelection);

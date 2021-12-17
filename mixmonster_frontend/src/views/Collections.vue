@@ -3,12 +3,12 @@
     <v-main>
       <v-container>
         <v-row align='center' justify='center'>
-          <v-col cols='8' xl='2' lg='2' md='4' sm='4' xs='8'  class='pa-5'>
+          <v-col cols='12' xl='4' lg='4' md='8' sm='10' xs='12' class='pa-5'>
             <v-img
               alt="MixMonster Logo"
               class="shrink mr-2"
               contain
-              src="@/assets/icon.png"
+              :src="$store.state.icon"
               transition="scale-transition"
             />
           </v-col>
@@ -380,7 +380,9 @@ export default class Collections extends Vue {
 
   qrValue = ''
 
-  previewRootUrl = `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections/use/`
+  rootUrl = `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}`;
+
+  previewRootUrl = `${this.rootUrl}/collections/use/`
 
   get collections(): Collection[] {
     return this.$store.state.collections;

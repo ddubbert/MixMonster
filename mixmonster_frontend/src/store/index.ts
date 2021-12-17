@@ -38,11 +38,16 @@ export default function createStore(keycloak: Keycloak.KeycloakInstance):
 
   let errorTimeout: number | undefined;
 
+  const rootUrl = `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}`;
+  const randomIcon = `${rootUrl}/mixmonster_${Math.floor(Math.random() * 3) + 1}.png`;
+
   return new Vuex.Store({
     state: {
       token: undefined as string | undefined,
       collections: [] as Collection[],
       error: '',
+      rootUrl,
+      icon: randomIcon,
     },
     getters: {
       getCollection: (state) => (collectionId: string): Collection | undefined => state
