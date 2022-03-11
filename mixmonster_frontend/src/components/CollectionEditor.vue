@@ -23,7 +23,7 @@
     <v-row align='center' justify="center" class='mt-n5'>
       <v-col  xs='12' sm='12' md='12' lg='8'>
         <v-row align='center' justify='center'>
-          <v-switch v-model="collection.allowReRoll"/>
+          <v-switch inset v-model="collection.allowReRoll"/>
           <div>
             Erneutes würfeln erlauben?
             <v-tooltip top>
@@ -32,8 +32,8 @@
                   mdi-message-question-outline
                 </v-icon>
               </template>
-              Nutzer die mit ihrem zufälligen MonsterMix nicht zufrieden sind
-              erhalten hierdurch die Möglichkeit erneut zu würfeln.
+              Nutzende, die mit ihrem zufälligen MonsterMix nicht zufrieden sind,
+              erhalten hierdurch die Möglichkeit, erneut zu würfeln.
             </v-tooltip>
           </div>
         </v-row>
@@ -45,7 +45,7 @@
       justify='center'
     >
       <v-col  xs='12' sm='12' md='12' lg='8'>
-        <v-expansion-panels multiple>
+        <v-expansion-panels multiple v-model="categoryPanels">
           <v-expansion-panel
             v-for='(category, categoryIndex) in collection.categories'
             :key='`category${categoryIndex}`'
@@ -56,9 +56,35 @@
                 <v-icon x-large color='white'>mdi-menu-down</v-icon>
               </template>
 
-              <span class='text-h6 text-md-h5 white--text text-break'>
-                <strong>{{ category.title }}</strong>
-              </span>
+              <v-col cols='1' xl='1' lg='1' md='1' sm='1'>
+                <v-row>
+                  <v-btn
+                    @click.stop='moveCategoryUp(categoryIndex)'
+                    icon
+                    color='white'
+                    :disabled='categoryIndex === 0'
+                  >
+                    <v-icon v-bind='categoryIconSize'>mdi-chevron-up</v-icon>
+                  </v-btn>
+                </v-row>
+
+                <v-row>
+                  <v-btn
+                    @click.stop='moveCategoryDown(categoryIndex)'
+                    icon
+                    color='white'
+                    :disabled='categoryIndex === collection.categories.length - 1'
+                  >
+                    <v-icon v-bind='categoryIconSize'>mdi-chevron-down</v-icon>
+                  </v-btn>
+                </v-row>
+              </v-col>
+
+              <v-col cols='11' xl='11' lg='11' md='11' sm='11'>
+                <span class='text-h6 text-md-h5 white--text text-break'>
+                  <strong>{{ category.title }}</strong>
+                </span>
+              </v-col>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content
@@ -89,7 +115,7 @@
               <v-row align='center' justify="center" class='mt-n5'>
                 <v-col sm='12' md='6'>
                   <v-row align='center' justify='center'>
-                    <v-switch v-model="category.selectable" color='accent'/>
+                    <v-switch inset v-model="category.selectable" color='accent'/>
                     <div>
                       Vorauswahl erlauben?
                       <v-tooltip top>
@@ -98,8 +124,8 @@
                             mdi-message-question-outline
                           </v-icon>
                         </template>
-                        Nutzer des MixMonsters können mögliche Kriterien dieser Kategorie vor einem
-                        MonsterMix eingrenzen bzw. eine Vorauswahl tätigen.
+                        Nutzende des MixMonsters können mögliche Kriterien dieser Kategorie vor
+                        einem MonsterMix eingrenzen bzw. eine Vorauswahl tätigen.
                       </v-tooltip>
                     </div>
                   </v-row>
@@ -130,8 +156,8 @@
                             mdi-message-question-outline
                           </v-icon>
                         </template>
-                        Diese Zahl bestimmt, wieviele Zufallskriterium für Nutzer bei einem
-                        MonsterMix für diese Kategorie generiert werden.
+                        Diese Zahl bestimmt, wie viele Kriterien bei einem MonsterMix für diese
+                        Kategorie generiert werden.
                       </v-tooltip>
                     </div>
                   </v-row>
@@ -140,7 +166,7 @@
 
               <v-row>
                 <v-col class='pa-0'>
-                  <v-expansion-panels multiple>
+                  <v-expansion-panels multiple v-model="criteriaPanels[categoryIndex]">
                     <v-row
                       align='start'
                       class='ma-2 justify-sm-center justify-lg-start'
@@ -163,7 +189,32 @@
                             </template>
 
                             <v-row align='center'>
-                              <v-col class='pa-0 shrink'>
+                              <v-col cols='1' xl='1' lg='1' md='1' sm='1'>
+                                <v-row>
+                                  <v-btn
+                                    @click.stop='moveCriteriaUp(categoryIndex, criteriaIndex)'
+                                    icon
+                                    color='white'
+                                    :disabled='criteriaIndex === 0'
+                                  >
+                                    <v-icon v-bind='criteriaIconSize'>mdi-chevron-up</v-icon>
+                                  </v-btn>
+                                </v-row>
+
+                                <v-row>
+                                  <v-btn
+                                    @click.stop='moveCriteriaDown(categoryIndex, criteriaIndex)'
+                                    icon
+                                    color='white'
+                                    :disabled='criteriaIndex === collection
+                                      .categories[categoryIndex].criteria.length - 1'
+                                  >
+                                    <v-icon v-bind='criteriaIconSize'>mdi-chevron-down</v-icon>
+                                  </v-btn>
+                                </v-row>
+                              </v-col>
+
+                              <v-col class='pa-0 pl-md-5 pl-sm-3 pl-3 shrink'>
                                 <v-avatar size='45'
                                           rounded
                                           style='border: 2px solid white;'>
@@ -176,8 +227,12 @@
 
                               <v-col>
                                 <span v-if='criteria.showTitle'
-                                      class='text-subtitle-1 text-md-h6 white--text text-break'
-                                >
+                                      class='text-subtitle-1 text-md-h6 white--text text-break'>
+                                  <strong>{{ criteria.title }}</strong>
+                                </span>
+                                <span v-else
+                                      class='text-subtitle-1 text-md-h6 white--text text-break
+                                      text-decoration-line-through'>
                                   <strong>{{ criteria.title }}</strong>
                                 </span>
                               </v-col>
@@ -222,7 +277,7 @@
                                         {{ criteria.showTitle ? 'mdi-eye' : 'mdi-eye-off' }}
                                       </v-icon>
                                     </template>
-                                    Titel für Nutzer des MixMonsters anzeigen?<br>
+                                    Titel für Nutzende des MixMonsters anzeigen?<br>
                                     Wird dies ausgeschaltet, ist nur das Bild sichtbar.
                                   </v-tooltip>
                                 </template>
@@ -380,6 +435,10 @@ export default class CollectionEditor extends EditorProps {
 
   collection: Collection = JSON.parse(JSON.stringify(this.initialCollection));
 
+  categoryPanels : number[] = [];
+
+  criteriaPanels : number[][] = [];
+
   get imageSize(): number {
     switch (this.$vuetify.breakpoint.name) {
       case 'xs': return 200;
@@ -389,6 +448,26 @@ export default class CollectionEditor extends EditorProps {
       case 'xl': return 200;
       default: return 150;
     }
+  }
+
+  get categoryIconSize() {
+    const size = ({
+      xs: 'medium',
+      sm: 'medium',
+      lg: 'large',
+      xl: 'large',
+    } as { [key: string]: string })[this.$vuetify.breakpoint.name];
+    return size ? { [size]: true } : {};
+  }
+
+  get criteriaIconSize() {
+    const size = ({
+      xs: 'small',
+      sm: 'small',
+      lg: 'medium',
+      xl: 'medium',
+    } as { [key: string]: string })[this.$vuetify.breakpoint.name];
+    return size ? { [size]: true } : {};
   }
 
   checkTitle(): void {
@@ -424,11 +503,52 @@ export default class CollectionEditor extends EditorProps {
   }
 
   addCategory(): void {
-    this.collection.categories.push({ ...this.categoryTemplate });
+    this.collection.categories.push(JSON.parse(JSON.stringify(this.categoryTemplate)));
+    this.categoryPanels.push(this.collection.categories.length - 1);
+    this.criteriaPanels.push([0]);
   }
 
   deleteCategory(categoryIndex: number): void {
+    const updated = this.categoryPanels
+      .filter((it) => it !== categoryIndex)
+      .map((it) => (it > categoryIndex ? it - 1 : it));
+
+    this.categoryPanels.splice(0);
+    this.categoryPanels.push(...updated);
+    this.criteriaPanels.splice(categoryIndex, 1);
     this.collection.categories.splice(categoryIndex, 1);
+  }
+
+  moveCategoryDown(categoryIndex: number): void {
+    const updated = this.categoryPanels.map((it) => {
+      if (it === categoryIndex + 1) return categoryIndex;
+      if (it === categoryIndex) return categoryIndex + 1;
+      return it;
+    });
+
+    this.categoryPanels.splice(0);
+    this.categoryPanels.push(...updated);
+
+    this.criteriaPanels
+      .splice(categoryIndex + 1, 0, this.criteriaPanels.splice(categoryIndex, 1)[0]);
+    this.collection.categories
+      .splice(categoryIndex + 1, 0, this.collection.categories.splice(categoryIndex, 1)[0]);
+  }
+
+  moveCategoryUp(categoryIndex: number): void {
+    const updated = this.categoryPanels.map((it) => {
+      if (it === categoryIndex - 1) return categoryIndex;
+      if (it === categoryIndex) return categoryIndex - 1;
+      return it;
+    });
+
+    this.categoryPanels.splice(0);
+    this.categoryPanels.push(...updated);
+
+    this.criteriaPanels
+      .splice(categoryIndex - 1, 0, this.criteriaPanels.splice(categoryIndex, 1)[0]);
+    this.collection.categories
+      .splice(categoryIndex - 1, 0, this.collection.categories.splice(categoryIndex, 1)[0]);
   }
 
   addCriteria(categoryIndex: number): void {
@@ -436,47 +556,94 @@ export default class CollectionEditor extends EditorProps {
       showTitle: true,
       title: `Kriterium ${this.collection.categories[categoryIndex].criteria.length + 1}`,
     });
+
+    this.criteriaPanels[categoryIndex]
+      .push(this.collection.categories[categoryIndex].criteria.length - 1);
   }
 
   deleteCriteria(categoryIndex: number, criteriaIndex: number): void {
+    const updated = this.criteriaPanels[categoryIndex]
+      .filter((it) => it !== criteriaIndex)
+      .map((it) => (it > criteriaIndex ? it - 1 : it));
+
+    this.criteriaPanels[categoryIndex].splice(0);
+    this.criteriaPanels[categoryIndex].push(...updated);
     this.collection.categories[categoryIndex].criteria.splice(criteriaIndex, 1);
   }
 
-  selectedImage(categoryIndex: number, criteriaIndex: number, event: Event): void {
-    if (event.target) {
-      const target = event.target as HTMLInputElement;
-      if (target.files && target.files[0]) {
-        this.$set(
-          this.collection.categories[categoryIndex].criteria[criteriaIndex],
-          'file',
-          target.files[0],
-        );
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
-          const r = e.target?.result || undefined;
-          this.$set(
-            this.collection.categories[categoryIndex].criteria[criteriaIndex],
-            'image',
-            (typeof r === 'string') ? r : undefined,
-          );
-        };
-        fileReader.readAsDataURL(target.files[0]);
-      }
-    }
+  moveCriteriaDown(categoryIndex: number, criteriaIndex: number): void {
+    console.log(categoryIndex, criteriaIndex, this.criteriaPanels);
+    const updated = this.criteriaPanels[categoryIndex].map((it) => {
+      if (it === criteriaIndex + 1) return criteriaIndex;
+      if (it === criteriaIndex) return criteriaIndex + 1;
+      return it;
+    });
+
+    this.criteriaPanels[categoryIndex].splice(0);
+    this.criteriaPanels[categoryIndex].push(...updated);
+
+    this.collection.categories[categoryIndex].criteria.splice(
+      criteriaIndex + 1, 0,
+      this.collection.categories[categoryIndex].criteria.splice(criteriaIndex, 1)[0],
+    );
   }
 
-  removeImage(categoryIndex: number, criteriaIndex: number): void {
-    this.$set(
-      this.collection.categories[categoryIndex].criteria[criteriaIndex],
-      'file',
-      undefined,
-    );
-    this.$set(
-      this.collection.categories[categoryIndex].criteria[criteriaIndex],
-      'image',
-      undefined,
+  moveCriteriaUp(categoryIndex: number, criteriaIndex: number): void {
+    console.log(categoryIndex, criteriaIndex, this.criteriaPanels);
+    const updated = this.criteriaPanels[categoryIndex].map((it) => {
+      if (it === criteriaIndex - 1) return criteriaIndex;
+      if (it === criteriaIndex) return criteriaIndex - 1;
+      return it;
+    });
+
+    this.criteriaPanels[categoryIndex].splice(0);
+    this.criteriaPanels[categoryIndex].push(...updated);
+
+    this.collection.categories[categoryIndex].criteria.splice(
+      criteriaIndex - 1, 0,
+      this.collection.categories[categoryIndex].criteria.splice(criteriaIndex, 1)[0],
     );
   }
+
+  mounted(): void {
+    this.criteriaPanels.push(...new Array<number[]>(this.collection.categories.length));
+  }
+
+  // selectedImage(categoryIndex: number, criteriaIndex: number, event: Event): void {
+  //   if (event.target) {
+  //     const target = event.target as HTMLInputElement;
+  //     if (target.files && target.files[0]) {
+  //       this.$set(
+  //         this.collection.categories[categoryIndex].criteria[criteriaIndex],
+  //         'file',
+  //         target.files[0],
+  //       );
+  //       const fileReader = new FileReader();
+  //       fileReader.onload = (e) => {
+  //         const r = e.target?.result || undefined;
+  //         this.$set(
+  //           this.collection.categories[categoryIndex].criteria[criteriaIndex],
+  //           'image',
+  //           (typeof r === 'string') ? r : undefined,
+  //         );
+  //       };
+  //       fileReader.readAsDataURL(target.files[0]);
+  //     }
+  //   }
+  // }
+  //
+  // removeImage(categoryIndex: number, criteriaIndex: number): void {
+  //   this.$set(
+  //     this.collection.categories[categoryIndex].criteria[criteriaIndex],
+  //     'file',
+  //     undefined,
+  //   );
+  //   this.$set(
+  //     this.collection.categories[categoryIndex].criteria[criteriaIndex],
+  //     'image',
+  //     undefined,
+  //   );
+  // }
 }
 
 export type CollectionEditorType = InstanceType<typeof CollectionEditor>;

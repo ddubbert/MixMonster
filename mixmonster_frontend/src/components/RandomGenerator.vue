@@ -20,7 +20,7 @@
           :style='{ border: `${rollCount > 0 ? primary : accent} solid 5px !important` }'
         >
           <strong class='text-h5 text-md-h3'>
-            {{ reRollAllowed ? 'Mix It!' : '...' }}
+            {{ reRollAllowed ? 'Mix It!' : 'Mix It!' }}
           </strong>
         </v-btn>
 
@@ -40,7 +40,7 @@
               <v-icon x-large>mdi-content-copy</v-icon>
             </v-btn>
           </template>
-          <span>Zufallsauswahl in die Zwischenablage kopieren</span>
+          <span>Aktuellen MonsterMix in die Zwischenablage kopieren</span>
         </v-tooltip>
       </v-btn-toggle>
     </v-row>
@@ -116,17 +116,20 @@
                   <v-list-item-action v-if='category.selectable'>
                     <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-checkbox
-                          v-bind="attrs"
-                          v-on="on"
-                          :input-value="selected[categoryIndex].length === category.criteria.length"
-                          color='primary'
-                          @click='changeWholeSelectionFor(categoryIndex)'
-                        ></v-checkbox>
+                        <span v-bind="attrs" v-on="on">
+                          <v-checkbox
+                            :input-value=
+                              "selected[categoryIndex].length === category.criteria.length"
+                            color='primary'
+                            @click='changeWholeSelectionFor(categoryIndex)'
+                          ></v-checkbox>
+                        </span>
                       </template>
                       {{
                         selected[categoryIndex].length === category.criteria.length
-                          ? 'Alles abwählen'
+                          ? `Alles abwählen (für diese Kategorie
+                              ${category.criteriaRollAmount > 1 ? 'müssen' : 'muss'} mindestens
+                              ${category.criteriaRollAmount} ausgewählt sein)`
                           : 'Alles auswählen'
                       }}
                     </v-tooltip>
@@ -199,6 +202,24 @@
                                        v-text='criteria.title'
                                        class='text-break'>
                     </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item
+                  v-if='currentCollection.allowReRoll && rollCount > 0'
+                  :input-value='true'
+                >
+                  <v-list-item-content>
+                    <v-row justify='center'>
+                      <v-btn
+                        @click.stop='rerollSelectionFor(categoryIndex)'
+                        icon
+                        x-large
+                        :disabled='!generationPossible'
+                      >
+                        <v-icon color='accent' x-large>mdi-reload</v-icon>
+                      </v-btn>
+                    </v-row>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -354,9 +375,29 @@ export default class RandomGenerator extends RandomGeneratorProps {
     }
   }
 
+  animateSelectionForCategory(categoryIndex: number, selection: Criteria[]): void {
+    this.generationPossible = false;
+    const allIndices = this.currentCollection.categories[categoryIndex].criteria.map((_, i) => i);
+
+    this.animationIntervalRef = setInterval(() => {
+      this.randomSelection[categoryIndex].splice(0);
+      const random = getRandomSubArray(allIndices, selection.length);
+      this.randomSelection[categoryIndex].push(...this.currentCollection
+        .categories[categoryIndex]
+        .criteria
+        .filter((_, i) => random.includes(i)));
+    }, this.animationInterval);
+
+    setTimeout(() => {
+      clearInterval(this.animationIntervalRef);
+      this.randomSelection[categoryIndex].splice(0);
+      this.randomSelection[categoryIndex].push(...selection);
+      this.generationPossible = true;
+    }, this.animationDuration);
+  }
+
   animateSelection(selection: Criteria[][]): void {
     this.generationPossible = false;
-    // this.editableCategory = -1;
     const allIndices = this.currentCollection.categories.map((c) => c.criteria.map((_, i) => i));
 
     this.animationIntervalRef = setInterval(() => {
@@ -376,17 +417,33 @@ export default class RandomGenerator extends RandomGeneratorProps {
     }, this.animationDuration);
   }
 
+  generateRandomSelectionForCategory(categoryIndex: number) : Criteria[] {
+    const { criteriaRollAmount } = this.currentCollection.categories[categoryIndex];
+    const selection = [...this.selected[categoryIndex]];
+
+    const randomIndices = getRandomSubArray(selection, criteriaRollAmount);
+    return this.currentCollection.categories[categoryIndex].criteria
+      .filter((_, i) => randomIndices.includes(i));
+  }
+
   generateRandomSelection(): void {
     if (this.canRoll) {
-      const random = this.currentCollection.categories.map((category, categoryIndex) => {
-        const { criteriaRollAmount } = category;
-        const selection = [...this.selected[categoryIndex]];
-
-        const randomIndices = getRandomSubArray(selection, criteriaRollAmount);
-        return category.criteria.filter((_, i) => randomIndices.includes(i));
-      });
+      this.editableCategory = -1;
+      const random = this.currentCollection.categories
+        .map((category, categoryIndex) => this.generateRandomSelectionForCategory(categoryIndex));
 
       this.animateSelection(random);
+    }
+  }
+
+  rerollSelectionFor(categoryIndex: number): void {
+    if (this.canRoll
+      && categoryIndex >= 0
+      && categoryIndex < this.currentCollection.categories.length) {
+      this.editableCategory = -1;
+      const categoryRandom = this.generateRandomSelectionForCategory(categoryIndex);
+
+      this.animateSelectionForCategory(categoryIndex, categoryRandom);
     }
   }
 
