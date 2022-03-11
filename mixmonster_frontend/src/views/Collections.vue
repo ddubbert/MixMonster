@@ -32,7 +32,11 @@
             >
               <v-col cols='12' xs='12' sm='10' md='8'>
                 <v-card dark class="elevation-2" @click.stop='edit(index)' color='primary'>
-                  <v-row align='center' justify='start' class='pl-3 pr-3 mb-2'>
+                  <v-row
+                    align='center'
+                    justify='start'
+                    class='pl-5 pr-3 mb-2 pt-sm-5 pb-sm-5'
+                  >
                     <v-col cols='12' xs='12' sm='6' md='6' lg='6' xl='6'>
                       <span class='text-h5 white--text'>
                         <strong>{{ collection.title }}</strong>
@@ -178,7 +182,7 @@
                 <v-icon x-large>mdi-cloud-upload</v-icon>
               </v-btn>
             </template>
-            <span>Vorlage hochladen</span>
+            <span>Bestehendes MixMonster hochladen</span>
           </v-tooltip>
           <v-spacer></v-spacer>
         </v-row>
