@@ -8,7 +8,7 @@ import {
   shouldRenderGraphiQL,
 } from "graphql-helix";
 import { envelop, useSchema } from "@envelop/core";
-import { keycloakAuth} from './utils/auth';
+import { keycloakAuth } from './utils/auth';
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import resolvers from "./resolvers/resolvers";
 import typeDefs from "./schemas/schema";
