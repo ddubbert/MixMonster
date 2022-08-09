@@ -64,7 +64,7 @@
       </v-row>
 
       <v-row class='mt-8' align='center' justify='center' v-if='isTakingScreenshot'>
-        <v-col cols='12' xl='4' lg='4' md='8' sm='10' xs='12' class='pa-5'>
+        <v-col cols='12' xl='4' lg='4' md='8' sm='10' xs='12' class='pa-5 pt-3'>
           <v-img
             alt="MixMonster Logo"
             class="shrink mr-2"
