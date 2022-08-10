@@ -267,9 +267,6 @@
           </v-expansion-panels>
         </v-col>
       </v-row>
-
-      <v-row ref='canRow'>
-      </v-row>
     </v-container>
 
     <v-overlay :value="overlay" @click.native='overlay = false'>
@@ -526,7 +523,6 @@ export default class RandomGenerator extends RandomGeneratorProps {
       setTimeout(async () => {
         const row = this.$refs.screenshotArea as HTMLElement;
         const canvas = await html2canvas(row);
-        (this.$refs.canRow as HTMLElement).appendChild(canvas);
         const image = canvas.toDataURL();
         const l = document.createElement('a');
 
