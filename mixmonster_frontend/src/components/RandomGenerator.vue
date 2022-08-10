@@ -54,7 +54,7 @@
       </v-row>
 
       <v-row class='mb-8 mt-4' align='center' justify='center' v-if='isTakingScreenshot'>
-        <span v-if='isTakingScreenshot' class='text-h4 text-md-h3' align='center'>
+        <span v-if='isTakingScreenshot' class='text-h4 text-md-h3 text-break' align='center'>
             Dein persönlicher
             <strong v-if='currentCollection'>
               {{ currentCollection.title }}
@@ -175,7 +175,7 @@
                       && randomSelection[categoryIndex].includes(criteria) ? "accent" : "primary"'
                   >
                     <v-list-item-icon>
-                      <v-avatar size='45'
+                      <v-avatar size='60'
                                 rounded
                                 style='border: 2px solid white;'
                                 @click.stop='openImageFor(criteria)'
@@ -205,16 +205,25 @@
                   </v-list-item>
                 </v-list>
 
-                <v-list nav v-else-if='randomSelection.length > 0'>
+                <v-list
+                  v-else-if='randomSelection.length > 0'
+                  nav
+                  :style="{
+                    ['background-color']: 'white !important',
+                  }"
+                >
                   <v-list-item
                     v-for='(criteria, criteriaIndex) in randomSelection[categoryIndex]'
                     :key='`selection${categoryIndex}_criteria${criteriaIndex}`'
                     :input-value='true'
                     @click='openImageFor(criteria)'
                     :color='generationPossible ? "accent" : "gray"'
+                    :style="{
+                      ['background-color']: 'white !important',
+                     }"
                   >
                     <v-list-item-icon>
-                      <v-avatar size='45'
+                      <v-avatar size='60'
                                 rounded
                                 style='border: 2px solid white;'
                                 @click.stop='openImageFor(criteria)'
@@ -230,7 +239,7 @@
                     <v-list-item-content>
                       <v-list-item-title v-if='criteria.showTitle'
                                          v-text='criteria.title'
-                                         class='text-break'>
+                                         :class="`text-break ${isTakingScreenshot ? 'pl-8' : ''}`">
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -258,6 +267,9 @@
           </v-expansion-panels>
         </v-col>
       </v-row>
+
+      <v-row ref='canRow'>
+      </v-row>
     </v-container>
 
     <v-overlay :value="overlay" @click.native='overlay = false'>
@@ -280,7 +292,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import * as htmlToImage from 'html-to-image';
+import html2canvas from 'html2canvas';
 import Component from 'vue-class-component';
 import { Collection, Criteria } from '@/types/generated/graphql';
 import { copyToClipboard as copy } from '@/utils/ClipboardManager';
@@ -512,8 +524,10 @@ export default class RandomGenerator extends RandomGeneratorProps {
     setTimeout(async () => {
       this.isTakingScreenshot = true;
       setTimeout(async () => {
-        const row = this.$refs.screenshotArea as any;
-        const image = await htmlToImage.toJpeg(row, { quality: 0.95 });
+        const row = this.$refs.screenshotArea as HTMLElement;
+        const canvas = await html2canvas(row);
+        (this.$refs.canRow as HTMLElement).appendChild(canvas);
+        const image = canvas.toDataURL();
         const l = document.createElement('a');
 
         l.download = `${this.currentCollection.title}.jpeg`;
@@ -544,5 +558,9 @@ export default class RandomGenerator extends RandomGeneratorProps {
 
 .v-expansion-panel-content>>> .v-expansion-panel-content__wrap {
   padding: 0 !important;
+}
+
+.v-sheet.v-list:not(.v-sheet--outlined) {
+  box-shadow: 0 0 0 0 white, 0 0 0 0 white, 0 0 0 0 white !important;
 }
 </style>
