@@ -96,7 +96,9 @@
           >
             <v-expansion-panel class='mb-2'>
               <v-expansion-panel-header
-                :color='editableCategory === categoryIndex ? "accent" : "primary"'
+                :color='editableCategory === categoryIndex && !isTakingScreenshot
+                  ? "accent"
+                  : "primary"'
               >
                 <template v-slot:actions>
                   <v-tooltip top>
@@ -122,13 +124,17 @@
 
               <v-expansion-panel-content
                 :style="{
-                  border: `5px solid ${editableCategory === categoryIndex ? accent : primary}`,
+                  border: `5px solid ${
+                    editableCategory === categoryIndex && !isTakingScreenshot
+                      ? accent
+                      : primary
+                  }`,
                   ['border-bottom-left-radius']: 'inherit',
                   ['border-bottom-right-radius']: 'inherit',
                 }"
                 class='pa-0'
               >
-                <v-list nav v-if='editableCategory === categoryIndex'>
+                <v-list nav v-if='editableCategory === categoryIndex && !isTakingScreenshot'>
                   <v-list-item
                     :key='`category${categoryIndex}_edit_title`'
                     readonly
@@ -232,6 +238,7 @@
                                :src='criteria.image'
                                alt='Bild des Kriteriums'
                                v-if='!!criteria.image'
+                               crossorigin='use-credentials'
                         />
                       </v-avatar>
                     </v-list-item-icon>
