@@ -531,11 +531,22 @@ export default class RandomGenerator extends RandomGeneratorProps {
         const row = this.$refs.screenshotArea as HTMLElement;
         const canvas = await html2canvas(row);
         const image = canvas.toDataURL();
-        const l = document.createElement('a');
+        const title = `${this.currentCollection.title}.jpeg`;
 
-        l.download = `${this.currentCollection.title}.jpeg`;
-        l.href = image;
-        l.click();
+        if (navigator.share) {
+          const shareData = {
+            title,
+            url: image,
+          };
+
+          await navigator.share(shareData);
+        } else {
+          const l = document.createElement('a');
+
+          l.download = title;
+          l.href = image;
+          l.click();
+        }
 
         this.isTakingScreenshot = false;
         this.showLoadingOverlay = false;
