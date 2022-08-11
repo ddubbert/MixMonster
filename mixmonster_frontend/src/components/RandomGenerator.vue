@@ -244,7 +244,7 @@
                     </v-list-item-icon>
 
                     <v-list-item-content>
-                      <v-list-item-title v-if='criteria.showTitle'
+                      <v-list-item-title v-if='criteria.showTitle || isTakingScreenshot'
                                          v-text='criteria.title'
                                          :class="`text-break ${isTakingScreenshot ? 'pl-8' : ''}`">
                       </v-list-item-title>
