@@ -533,11 +533,14 @@ export default class RandomGenerator extends RandomGeneratorProps {
         const image = canvas.toDataURL();
         const title = `${this.currentCollection.title}.jpeg`;
 
+        console.log(navigator.share);
+
         if (navigator.share) {
           const shareData = {
             title,
             url: image,
           };
+          console.log(shareData);
 
           await navigator.share(shareData);
         } else {
