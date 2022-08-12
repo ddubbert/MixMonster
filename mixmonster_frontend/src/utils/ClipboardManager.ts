@@ -1,4 +1,4 @@
-export function copyToClipboard(textToCopy: string): Promise<void> {
+export function copyStringToClipboard(textToCopy: string): Promise<void> {
   if (navigator.clipboard && window.isSecureContext) {
     return navigator.clipboard.writeText(textToCopy);
   }
@@ -20,6 +20,18 @@ export function copyToClipboard(textToCopy: string): Promise<void> {
   });
 }
 
+export function copyBlobToClipboard(blob: Blob): Promise<void> {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.write([
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      new ClipboardItem({ [blob.type]: blob }),
+    ]);
+  }
+
+  return Promise.resolve();
+}
+
 export default {
-  copyToClipboard,
+  copyToClipboard: copyStringToClipboard,
 };

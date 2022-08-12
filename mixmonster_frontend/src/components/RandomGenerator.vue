@@ -40,16 +40,39 @@
                 v-bind="attrs"
                 v-on="on"
                 class='pt-8 pb-8'
-                @click.stop='copyToClipboard()'
+                @click.stop='downloadAsImage()'
                 x-large
                 :disabled='rollCount <= 0'
                 :style='{ border: `${rollCount > 0 ? primary : accent} solid 5px !important` }'
               >
-                <v-icon x-large>mdi-download</v-icon>
+                <v-icon large>mdi-download</v-icon>
               </v-btn>
             </template>
-            <span>Aktuellen MonsterMix als Bild herunterladen</span>
+            <span class='text-break'>
+              MonsterMix herunterladen und in den Zwischenspeicher legen
+            </span>
           </v-tooltip>
+
+<!--          <v-tooltip top>-->
+<!--            <template v-slot:activator="{ on, attrs }">-->
+<!--              <v-btn-->
+<!--                color='primary'-->
+<!--                light-->
+<!--                v-bind="attrs"-->
+<!--                v-on="on"-->
+<!--                class='pt-8 pb-8'-->
+<!--                @click.stop='copyImageToClipboard()'-->
+<!--                x-large-->
+<!--                :disabled='rollCount <= 0'-->
+<!--                :style='{-->
+<!--                  border: `${rollCount > 0 ? primary : accent} solid 5px !important`,-->
+<!--                }'-->
+<!--              >-->
+<!--                <v-icon large>mdi-content-copy</v-icon>-->
+<!--              </v-btn>-->
+<!--            </template>-->
+<!--            <span>Aktuellen MonsterMix im Zwischenspeicher ablegen</span>-->
+<!--          </v-tooltip>-->
         </v-btn-toggle>
       </v-row>
 
@@ -299,7 +322,7 @@ import Vue from 'vue';
 import html2canvas from 'html2canvas';
 import Component from 'vue-class-component';
 import { Collection, Criteria } from '@/types/generated/graphql';
-import { copyToClipboard as copy } from '@/utils/ClipboardManager';
+import { copyStringToClipboard, copyBlobToClipboard } from '@/utils/ClipboardManager';
 
 const RandomGeneratorProps = Vue.extend({
   props: {
@@ -385,23 +408,6 @@ export default class RandomGenerator extends RandomGeneratorProps {
 
   get reRollAllowed(): boolean {
     return this.rollCount === 0 || this.currentCollection.allowReRoll;
-  }
-
-  async copyToClipboard(): Promise<void> {
-    try {
-      const base = `Dein ${this.currentCollection.title} MonsterMix:`;
-      const selection = this.randomSelection.reduce((acc, randomCriteria, index) => {
-        const criteriaString = randomCriteria.map((it) => it.title).join(', ');
-        return `${acc}
-
-        ${this.currentCollection.categories[index].title} - ${criteriaString}`;
-      }, base);
-
-      await copy(selection);
-      await this.downloadAsImage();
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   changeWholeSelectionFor(categoryIndex: number): void {
@@ -530,18 +536,39 @@ export default class RandomGenerator extends RandomGeneratorProps {
       setTimeout(async () => {
         const row = this.$refs.screenshotArea as HTMLElement;
         const canvas = await html2canvas(row);
-        const image = canvas.toDataURL();
-        const title = `${this.currentCollection.title}.jpeg`;
-        const l = document.createElement('a');
 
-        l.download = title;
-        l.href = image;
-        l.click();
+        canvas.toBlob(async (blob) => {
+          if (blob) await copyBlobToClipboard(blob);
 
-        this.isTakingScreenshot = false;
-        this.showLoadingOverlay = false;
+          const image = canvas.toDataURL();
+          const title = `${this.currentCollection.title}.png`;
+          const l = document.createElement('a');
+
+          l.download = title;
+          l.href = image;
+          l.click();
+
+          this.isTakingScreenshot = false;
+          this.showLoadingOverlay = false;
+        });
       }, 500);
     }, 500);
+  }
+
+  async copyTextToClipboard(): Promise<void> {
+    try {
+      const base = `Dein ${this.currentCollection.title} MonsterMix:`;
+      const selection = this.randomSelection.reduce((acc, randomCriteria, index) => {
+        const criteriaString = randomCriteria.map((it) => it.title).join(', ');
+        return `${acc}
+
+        ${this.currentCollection.categories[index].title} - ${criteriaString}`;
+      }, base);
+
+      await copyStringToClipboard(selection);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 </script>

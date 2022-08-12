@@ -105,6 +105,7 @@
           text
           rounded
           class="my-2"
+          @click.stop="$router.push({ name: link })"
         >
           {{ link }}
         </v-btn>
@@ -122,7 +123,6 @@ export default class App extends Vue {
   links = [
     'Impressum',
     'Datenschutz',
-    'Verbundpartner',
   ]
 
   barHeight = 0;
