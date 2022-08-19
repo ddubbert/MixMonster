@@ -26,6 +26,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Privacy.vue'),
   },
   {
+    path: '/disclaimer',
+    name: 'Haftung',
+    component: () => import('../views/Disclaimer.vue'),
+  },
+  {
     path: '/collections/edit/:collectionId',
     name: 'EditCollection',
     component: () => import('../views/EditCollection.vue'),

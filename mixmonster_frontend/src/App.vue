@@ -85,15 +85,32 @@
       {{ $store.state.error }}
     </v-alert>
 
-    <v-main class='pt-10 pb-16 mb-16'>
+    <v-main class='pt-10 pb-16 mb-16' ref='main'>
       <router-view/>
     </v-main>
 
     <v-footer
       color="secondary"
       padless
-      fixed
+      :absolute="windowWidth < 500"
+      :fixed="windowWidth >= 500"
     >
+      <cookie-law
+        v-if="$route.name !== 'Datenschutz'"
+        theme="dark-lime"
+        buttonText="Alles klar!"
+        storageName="MixMonster:cookie:consent"
+      >
+        <div slot="message">
+          Für die Erstellung und Verwaltung der MixMonster sind Cookies notwendig um den
+          jeweiligen Nutzer identifizieren zu können. Dabei handelt es sich ausschließlich um
+          funktionale Cookies, ohne die unser Service nicht funktionieren würde. Bei der reinen
+          Verwendung eines MixMonsters hingegen werden keine Cookies angelegt.
+          Genauere Informationen hierzu können unserem
+          <router-link to="privacy">Datenschutzhinweis</router-link> entnommen werden.
+        </div>
+      </cookie-law>
+
       <v-row
         justify="center"
         no-gutters
@@ -109,6 +126,16 @@
         >
           {{ link }}
         </v-btn>
+
+        <v-btn
+          color="white"
+          text
+          rounded
+          class="my-2"
+          @click.stop="$router.push({ name: 'Haftung' })"
+        >
+          Haftung
+        </v-btn>
       </v-row>
     </v-footer>
   </v-app>
@@ -117,8 +144,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import CookieLaw from 'vue-cookie-law';
 
-@Component
+@Component({
+  components: {
+    CookieLaw,
+  },
+})
 export default class App extends Vue {
   links = [
     'Impressum',
@@ -127,9 +159,17 @@ export default class App extends Vue {
 
   barHeight = 0;
 
+  windowWidth = 0;
+
+  setWidth() {
+    const ref = this.$refs.main;
+    this.windowWidth = ref ? (ref as Vue).$el.clientWidth : 0;
+  }
+
   mounted(): void {
     const ref = this.$refs.appBar;
     this.barHeight = ref ? (ref as Vue).$el.clientHeight : 0;
+    this.setWidth();
   }
 
   logout(): void {
