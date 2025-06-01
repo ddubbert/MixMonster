@@ -464,8 +464,10 @@ export default class Collections extends Vue {
     const exportedFilename = `${collection.title}.xlsx`;
     const blob = new Blob([workbookOutput], { type: 'application/octet-stream' });
 
-    if (navigator.msSaveBlob) { // IE 10+
+    if (typeof navigator.msSaveBlob === 'function') { // IE 10+
       navigator.msSaveBlob(blob, exportedFilename);
+    } else if (typeof navigator.msSaveOrOpenBlob === 'function') { // Older Edge versions
+      navigator.msSaveOrOpenBlob(blob, exportedFilename);
     } else {
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
@@ -496,12 +498,7 @@ export default class Collections extends Vue {
   }
 
   created(): void {
-    if (this.$store.getters.isAuthenticated) {
-      this.$store.dispatch('getCollections');
-    } else {
-      console.warn('Collections view loaded without authentication, redirecting to Home.');
-      this.$router.push({ name: 'Home' });
-    }
+    this.$store.dispatch('getCollections');
   }
 
   // mounted(): void {
