@@ -13,36 +13,43 @@ Vue.config.productionTip = false;
 const store = createStore(keycloak);
 const router = createRouter(store, keycloak);
 
-keycloak.init({
-  onLoad: 'check-sso',
-  silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
-  pkceMethod: 'S256',
-})
-  .then((authenticated) => {
-    if (authenticated) {
-      console.log('User is authenticated on app startup.');
-      store.dispatch('setKeycloakToken', keycloak.token);
-    } else {
-      console.log('User is NOT authenticated on app startup.');
-    }
+new Vue({
+  router,
+  store,
+  vuetify,
+  render: (h) => h(App),
+}).$mount('#app');
 
-    new Vue({
-      router,
-      store,
-      vuetify,
-      render: (h) => h(App),
-    }).$mount('#app');
-  })
-  .catch((error) => {
-    console.error('Failed to initialize Keycloak adapter:', error);
-
-    new Vue({
-      router,
-      store,
-      vuetify,
-      render: (h) => h(App),
-    }).$mount('#app');
-  });
+// keycloak.init({
+//   onLoad: 'check-sso',
+//   silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
+//   pkceMethod: 'S256',
+// })
+//   .then((authenticated) => {
+//     if (authenticated) {
+//       console.log('User is authenticated on app startup.');
+//       store.dispatch('setKeycloakToken', keycloak.token);
+//     } else {
+//       console.log('User is NOT authenticated on app startup.');
+//     }
+//
+//     new Vue({
+//       router,
+//       store,
+//       vuetify,
+//       render: (h) => h(App),
+//     }).$mount('#app');
+//   })
+//   .catch((error) => {
+//     console.error('Failed to initialize Keycloak adapter:', error);
+//
+//     new Vue({
+//       router,
+//       store,
+//       vuetify,
+//       render: (h) => h(App),
+//     }).$mount('#app');
+//   });
 
 // import 'vue-class-component/hooks';
 // import Vue from 'vue';
