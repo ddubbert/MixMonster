@@ -1,0 +1,9 @@
+<html>
+<body>
+<script>
+  // This script is executed within an iframe by Keycloak for silent SSO checks.
+  // It communicates the result back to the parent window (your app).
+  parent.postMessage(location.href, location.origin);
+</script>
+</body>
+</html>

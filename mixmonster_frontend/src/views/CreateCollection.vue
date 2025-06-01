@@ -138,10 +138,10 @@ export default class CreateCollection extends Vue {
     this.$router.push({ name: 'Collections' });
   }
 
-  beforeCreate(): void {
-    if (!this.$keycloak.token) {
-      this.$router.push({ name: 'Collections' });
-    }
-  }
+  // beforeCreate(): void {
+  //   if (!this.$keycloak.token) {
+  //     this.$router.push({ name: 'Collections' });
+  //   }
+  // }
 }
 </script>
