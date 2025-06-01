@@ -6,7 +6,8 @@ import createRouter from './router';
 import createStore from './store';
 import vuetify from './plugins/vuetify';
 
-const keycloak = Keycloak('/keycloak.json');
+const keycloak = new Keycloak('/keycloak.json');
+console.log(keycloak);
 Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
