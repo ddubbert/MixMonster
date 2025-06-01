@@ -37,7 +37,7 @@ Vue.use(Vuex);
 
 export default function createStore(keycloakInstance: Keycloak.KeycloakInstance): Store<RootState> {
   const httpLink = createHttpLink({
-    uri: `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/graphql`,
+    uri: `http://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/graphql`,
   });
 
   const cache = new InMemoryCache();

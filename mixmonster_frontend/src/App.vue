@@ -175,7 +175,7 @@ export default class App extends Vue {
   logout(): void {
     this.$store.dispatch(
       'logout',
-      `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}`,
+      // `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}`,
     );
   }
 }
