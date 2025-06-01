@@ -16,6 +16,12 @@ function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstan
       meta: { requiresAuth: false },
     },
     {
+      path: '/home',
+      name: 'Home',
+      component: Home,
+      meta: { requiresAuth: false },
+    },
+    {
       path: '/collections',
       name: 'Collections',
       component: () => import('../views/Collections.vue'),
