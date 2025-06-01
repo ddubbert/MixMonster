@@ -151,10 +151,10 @@ export default class EditCollection extends EditProps {
     this.$router.push({ name: 'Collections' });
   }
 
-  beforeCreate(): void {
-    if (!this.$keycloak.token) {
-      this.$router.push({ name: 'Collections' });
-    }
-  }
+  // beforeCreate(): void {
+  //   if (!this.$keycloak.token) {
+  //     this.$router.push({ name: 'Collections' });
+  //   }
+  // }
 }
 </script>

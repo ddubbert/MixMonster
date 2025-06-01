@@ -495,20 +495,29 @@ export default class Collections extends Vue {
     }
   }
 
-  mounted(): void {
-    if (!this.$keycloak.token) {
-      this.$store.dispatch(
-        'login',
-        `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections`,
-      ).then((auth) => {
-        if (!auth) {
-          // window.location.reload();
-          this.$router.push('Home');
-        } else {
-          this.$store.dispatch('getCollections');
-        }
-      });
+  created(): void {
+    if (this.$store.getters.isAuthenticated) {
+      this.$store.dispatch('getCollections');
+    } else {
+      console.warn('Collections view loaded without authentication, redirecting to Home.');
+      this.$router.push({ name: 'Home' });
     }
   }
+
+  // mounted(): void {
+  //   if (!this.$keycloak.token) {
+  //     this.$store.dispatch(
+  //       'login',
+  //       `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/collections`,
+  //     ).then((auth) => {
+  //       if (!auth) {
+  //         // window.location.reload();
+  //         this.$router.push('Home');
+  //       } else {
+  //         this.$store.dispatch('getCollections');
+  //       }
+  //     });
+  //   }
+  // }
 }
 </script>
