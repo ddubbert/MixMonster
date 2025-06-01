@@ -8,6 +8,8 @@ import Home from '@/views/Home.vue';
 Vue.use(VueRouter);
 
 function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstance): VueRouter {
+  console.log(keycloak);
+  console.log(keycloak.login);
   const routes: Array<RouteConfig> = [
     {
       path: '/',
@@ -88,6 +90,8 @@ function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstan
   router.beforeEach(async (to, from, next) => {
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
     console.log(requiresAuth);
+    console.log(keycloak);
+    console.log(keycloak.login);
 
     if (requiresAuth) {
       if (keycloak.authenticated) {
