@@ -91,7 +91,7 @@ function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstan
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
     console.log(requiresAuth);
     console.log(keycloak);
-    console.log(keycloak.login);
+    console.log(keycloak.authenticated);
 
     if (requiresAuth) {
       if (keycloak.authenticated) {
@@ -99,7 +99,10 @@ function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstan
       } else {
         try {
           console.log(`Authenticating for protected route: ${to.fullPath}`);
-          await keycloak.login({ redirectUri: window.location.origin + to.fullPath });
+          await keycloak.init({
+            onLoad: 'login-required',
+            redirectUri: window.location.origin + to.fullPath,
+          });
         } catch (e) {
           console.error('Authentication failed during navigation guard:', e);
           store.dispatch('activateError', 'Login für diese Seite erforderlich oder fehlgeschlagen.');
