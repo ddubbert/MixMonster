@@ -12,7 +12,7 @@ Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
 const store = createStore(keycloak);
-const router = createRouter(store, keycloak);
+const router = createRouter(store);
 
 new Vue({
   router,
