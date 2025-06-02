@@ -62,7 +62,8 @@ export default function createStore(keycloakInstance: Keycloak.KeycloakInstance)
       getCollection: (state) => (collectionId: string): Collection | undefined => state
         .collections
         .find((col) => col.id === collectionId),
-      isAuthenticated: (state): boolean => !!state.token && keycloakInstance.authenticated === true,
+      isAuthenticated: (state): boolean => !!state.token,
+      // && keycloakInstance.authenticated === true,
     },
     mutations: {
       setToken(state, token: string | undefined) {
