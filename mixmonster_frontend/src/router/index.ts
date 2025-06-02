@@ -7,9 +7,7 @@ import Home from '@/views/Home.vue';
 
 Vue.use(VueRouter);
 
-function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstance): VueRouter {
-  console.log(keycloak);
-  console.log(keycloak.login);
+function createRouter(store: Store<RootState>): VueRouter {
   const routes: Array<RouteConfig> = [
     {
       path: '/',
@@ -90,8 +88,8 @@ function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstan
   router.beforeEach(async (to, from, next) => {
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
     console.log(requiresAuth);
-    console.log(keycloak);
-    console.log(store.getters.isAuthenticated);
+    console.log(store);
+    console.log(store.getters);
 
     if (requiresAuth) {
       if (store.getters.isAuthenticated) {
@@ -99,15 +97,16 @@ function createRouter(store: Store<RootState>, keycloak: Keycloak.KeycloakInstan
       } else {
         try {
           console.log(`Authenticating for protected route: ${to.fullPath}`);
-          const auth = await keycloak.init({
+          const auth = await Vue.prototype.$keycloak.init({
             onLoad: 'login-required',
             redirectUri: window.location.origin + to.fullPath,
           });
+          console.log(auth);
           if (auth) {
-            console.log(keycloak.token);
-            store.commit('setToken', keycloak.token);
+            console.log(Vue.prototype.$keycloak.token);
+            store.commit('setToken', Vue.prototype.$keycloak.token);
+            next();
           }
-          next();
         } catch (e) {
           console.error('Authentication failed during navigation guard:', e);
           store.dispatch('activateError', 'Login für diese Seite erforderlich oder fehlgeschlagen.');
