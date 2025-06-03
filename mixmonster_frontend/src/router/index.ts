@@ -100,9 +100,10 @@ function createRouter(store: Store<RootState>): VueRouter {
           console.log(`Authenticating for protected route: ${to.fullPath}`);
           const redirectUri = window.location.origin + to.fullPath;
           const { code } = to.params;
-          if (from.fullPath.includes('collections')) {
+          if (from.fullPath.includes('collections') || from.fullPath.includes('auth')) {
             console.log(code);
             console.log(to.params);
+            console.log(from.params);
             const token = await exchangeToken(redirectUri, code, fetch);
             await store.dispatch('setKeycloakToken', token);
             // next();
