@@ -109,7 +109,10 @@ function createRouter(store: Store<RootState>): VueRouter {
             // next();
           } else {
             const url = loginUrl(redirectUri);
-            window.location.href = url;
+            // window.location.href = url;
+            console.log(code);
+            console.log(to.params);
+            console.log(from.params);
           }
           // const auth = await Vue.prototype.$keycloak.init({
           //   onLoad: 'login-required',
