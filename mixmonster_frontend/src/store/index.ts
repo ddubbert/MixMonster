@@ -98,7 +98,7 @@ export default function createStore(keycloakInstance: Keycloak.KeycloakInstance)
       },
     },
     actions: {
-      setKeycloakToken({ commit }, token: string | undefined) {
+      async setKeycloakToken({ commit }, token: string | undefined) {
         commit('setToken', token);
 
         if (token) {
