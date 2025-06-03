@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import { Store } from 'vuex';
-import Keycloak from 'keycloak-js';
 import { RootState } from '@/store';
 import Home from '@/views/Home.vue';
+import { exchangeToken, getValidAccessToken, loginUrl } from '@/utils/KeycloakManager';
 
 Vue.use(VueRouter);
 
@@ -92,21 +92,33 @@ function createRouter(store: Store<RootState>): VueRouter {
     console.log(store.getters);
 
     if (requiresAuth) {
-      if (store.getters.isAuthenticated) {
+      const accessToken = await getValidAccessToken(fetch);
+      if (accessToken) {
+        await store.dispatch('setKeycloakToken', accessToken);
         next();
       } else {
         try {
           console.log(`Authenticating for protected route: ${to.fullPath}`);
-          const auth = await Vue.prototype.$keycloak.init({
-            onLoad: 'login-required',
-            redirectUri: window.location.origin + to.fullPath,
-          });
-          console.log(auth);
-          if (auth) {
-            console.log(Vue.prototype.$keycloak.token);
-            store.commit('setToken', Vue.prototype.$keycloak.token);
+          const redirectUri = window.location.origin + to.fullPath;
+          const { code } = to.params;
+          if (code) {
+            const token = await exchangeToken(redirectUri, code, fetch);
+            await store.dispatch('setKeycloakToken', token);
             next();
+          } else {
+            const url = loginUrl(redirectUri);
+            window.location.href = url;
           }
+          // const auth = await Vue.prototype.$keycloak.init({
+          //   onLoad: 'login-required',
+          //   redirectUri: window.location.origin + to.fullPath,
+          // });
+          // console.log(auth);
+          // if (auth) {
+          //   console.log(Vue.prototype.$keycloak.token);
+          //   store.commit('setToken', Vue.prototype.$keycloak.token);
+          //   next();
+          // }
         } catch (e) {
           console.error('Authentication failed during navigation guard:', e);
           store.dispatch('activateError', 'Login für diese Seite erforderlich oder fehlgeschlagen.');
