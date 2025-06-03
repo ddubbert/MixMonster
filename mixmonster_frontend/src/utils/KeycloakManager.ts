@@ -195,7 +195,7 @@ export async function exchangeToken(
     params.append('grant_type', 'authorization_code');
     params.append('client_id', KEYCLOAK_CLIENT_ID);
     params.append('code', authCode);
-    // params.append('redirect_uri', redirectUri);
+    params.append('redirect_uri', redirectUri);
 
     const response = await fetch(endpoint, {
       method: 'POST',

@@ -87,8 +87,6 @@ function createRouter(store: Store<RootState>): VueRouter {
 
   router.beforeEach(async (to, from, next) => {
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-    console.log(window.location.origin + to.fullPath);
-    console.log(to.params);
 
     if (requiresAuth) {
       const accessToken = await getValidAccessToken(fetch);
