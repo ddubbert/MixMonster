@@ -96,7 +96,7 @@ function createRouter(store: Store<RootState>): VueRouter {
       } else {
         try {
           console.log(`Authenticating for protected route: ${to.fullPath}`);
-          const redirectUri = window.location.origin + to.fullPath;
+          const redirectUri = window.location.origin + to.path;
           const { code } = to.query;
           if (code && typeof code === 'string') {
             const token = await exchangeToken(redirectUri, code, fetch);
