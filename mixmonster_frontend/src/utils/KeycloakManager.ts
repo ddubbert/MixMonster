@@ -177,7 +177,7 @@ export function loginUrl(redirectUri: string): string {
   const params = new URLSearchParams();
   params.append('response_type', 'code');
   params.append('scope', 'openid profile email');
-  params.append('redirect_uri', redirectUri);
+  // params.append('redirect_uri', redirectUri);
   params.append('client_id', KEYCLOAK_CLIENT_ID);
   return `${realmUrl}?${params.toString()}`;
 }
