@@ -99,20 +99,14 @@ function createRouter(store: Store<RootState>): VueRouter {
         try {
           console.log(`Authenticating for protected route: ${to.fullPath}`);
           const redirectUri = window.location.origin + to.fullPath;
-          const code = to.params.code as string;
-          if (code) {
-            console.log(code);
-            console.log(to.params);
-            console.log(to.params.code);
+          const { code } = to.query;
+          if (code && typeof code === 'string') {
             const token = await exchangeToken(redirectUri, code, fetch);
             await store.dispatch('setKeycloakToken', token);
-            // next();
+            next();
           } else {
             const url = loginUrl(redirectUri);
-            // window.location.href = url;
-            console.log(code);
-            console.log(to.params);
-            console.log(to.params.code);
+            window.location.href = url;
           }
           // const auth = await Vue.prototype.$keycloak.init({
           //   onLoad: 'login-required',
