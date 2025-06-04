@@ -84,19 +84,19 @@ export function setCookies(
 ) {
   Cookies.set(AccessTokenKey, accessToken, {
     path: '/',
-    httpOnly: true,
+    // httpOnly: true,
     secure: false,
     sameSite: 'lax',
-    maxAge: expiresIn,
+    expires: new Date(new Date().getTime() + (expiresIn * 1000)),
   });
   console.log('access set');
 
   Cookies.set(RefreshTokenKey, refreshToken, {
     path: '/',
-    httpOnly: true,
+    // httpOnly: true,
     secure: false,
     sameSite: 'lax',
-    maxAge: refreshExpiresIn,
+    expires: new Date(new Date().getTime() + (refreshExpiresIn * 1000)),
   });
   console.log('refresh set');
 
@@ -107,10 +107,10 @@ export function setCookies(
 
   Cookies.set(AccessTokenExpiresAtKey, expiresAt.toISOString(), {
     path: '/',
-    httpOnly: true,
+    // httpOnly: true,
     secure: false,
     sameSite: 'lax',
-    maxAge: expiresIn,
+    expires: new Date(new Date().getTime() + (expiresIn * 1000)),
   });
   console.log('expires set');
 }
