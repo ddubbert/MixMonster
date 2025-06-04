@@ -81,6 +81,10 @@ export function setCookies(
     refresh_expires_in: refreshExpiresIn,
   }: any,
 ) {
+  console.log(accessToken);
+  console.log(refreshToken);
+  console.log(expiresIn);
+  console.log(refreshExpiresIn);
   Cookies.set(AccessTokenKey, accessToken, {
     path: '/',
     httpOnly: true,
@@ -211,6 +215,7 @@ export async function exchangeToken(
     }
 
     const json = await response.json();
+    console.log(json);
     setCookies(json);
     return json.access_token;
   } catch (err) {
