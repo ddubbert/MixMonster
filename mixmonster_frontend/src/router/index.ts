@@ -107,16 +107,6 @@ function createRouter(store: Store<RootState>): VueRouter {
             const url = loginUrl(redirectUri);
             window.location.href = url;
           }
-          // const auth = await Vue.prototype.$keycloak.init({
-          //   onLoad: 'login-required',
-          //   redirectUri: window.location.origin + to.fullPath,
-          // });
-          // console.log(auth);
-          // if (auth) {
-          //   console.log(Vue.prototype.$keycloak.token);
-          //   store.commit('setToken', Vue.prototype.$keycloak.token);
-          //   next();
-          // }
         } catch (e) {
           console.error('Authentication failed during navigation guard:', e);
           store.dispatch('activateError', 'Login für diese Seite erforderlich oder fehlgeschlagen.');

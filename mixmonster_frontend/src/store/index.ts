@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex, { Store, StoreOptions } from 'vuex';
-import Keycloak from 'keycloak-js';
 import {
   ApolloClient, InMemoryCache, createHttpLink, NormalizedCacheObject,
 } from '@apollo/client';
@@ -20,6 +19,7 @@ import {
   UpdateCollectionMutation,
   UpdateCollectionMutationVariables,
 } from '@/types/generated/graphql';
+import { deleteCookies, getValidAccessToken } from '@/utils/KeycloakManager';
 
 let reloadTokenInterval: number | undefined;
 let apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -35,7 +35,12 @@ export interface RootState {
 
 Vue.use(Vuex);
 
-export default function createStore(keycloakInstance: Keycloak.KeycloakInstance): Store<RootState> {
+interface SetKeycloakPayload {
+  token: string | undefined;
+  expiresIn: number;
+}
+
+export default function createStore(): Store<RootState> {
   const httpLink = createHttpLink({
     uri: `http://${process.env.VUE_APP_FRONTEND_HOST}:${process.env.VUE_APP_FRONTEND_PORT}/graphql`,
   });
@@ -63,11 +68,34 @@ export default function createStore(keycloakInstance: Keycloak.KeycloakInstance)
         .collections
         .find((col) => col.id === collectionId),
       isAuthenticated: (state): boolean => !!state.token,
-      // && keycloakInstance.authenticated === true,
     },
     mutations: {
       setToken(state, token: string | undefined) {
         state.token = token;
+
+        if (token) {
+          const authLink = setContext((_, { headers }) => ({
+            headers: {
+              ...headers,
+              authorization: token ? `Bearer ${token}` : '',
+            },
+          }));
+
+          apolloClient = new ApolloClient({
+            link: authLink.concat(httpLink),
+            cache,
+          });
+        } else {
+          apolloClient = new ApolloClient({
+            link: httpLink,
+            cache,
+          });
+
+          if (reloadTokenInterval) {
+            clearInterval(reloadTokenInterval);
+            reloadTokenInterval = undefined;
+          }
+        }
       },
       addCollection(state, collection: Collection) {
         state.collections.push(collection);
@@ -98,67 +126,25 @@ export default function createStore(keycloakInstance: Keycloak.KeycloakInstance)
       },
     },
     actions: {
-      async setKeycloakToken({ commit }, token: string | undefined) {
+      async setKeycloakToken({ commit }, payload: SetKeycloakPayload) {
+        const { token, expiresIn } = payload;
         commit('setToken', token);
 
-        if (token) {
-          const authLink = setContext((_, { headers }) => ({
-            headers: {
-              ...headers,
-              authorization: token ? `Bearer ${token}` : '',
-            },
-          }));
-
-          apolloClient = new ApolloClient({
-            link: authLink.concat(httpLink),
-            cache,
-          });
-
-          if (reloadTokenInterval) {
-            clearInterval(reloadTokenInterval);
-          }
-          reloadTokenInterval = setInterval(() => {
-            keycloakInstance.updateToken(70)
-              .then((refreshed) => {
-                if (refreshed) {
-                  console.log(`Token refreshed ${refreshed}`);
-                  commit('setToken', keycloakInstance.token);
-                } else if (keycloakInstance.tokenParsed?.exp && keycloakInstance.timeSkew) {
-                  console.warn(`Token still valid for ${
-                    Math.round(
-                      keycloakInstance.tokenParsed.exp
-                    + keycloakInstance.timeSkew
-                    - new Date().getTime()
-                    / 1000,
-                    )
-                  } seconds`);
-                }
-              })
-              .catch(() => {
-                console.error('Failed to refresh token. User might need to re-login.');
-                commit('activateError', 'Sitzung abgelaufen. Bitte erneut anmelden.');
-              });
-          }, 20000);
-        } else {
-          apolloClient = new ApolloClient({
-            link: httpLink,
-            cache,
-          });
-          if (reloadTokenInterval) {
-            clearInterval(reloadTokenInterval);
-            reloadTokenInterval = undefined;
-          }
+        if (reloadTokenInterval) {
+          clearInterval(reloadTokenInterval);
+          reloadTokenInterval = undefined;
         }
-      },
 
-      async login({ commit }, redirectUri: string) {
-        try {
-          await keycloakInstance.login({ redirectUri });
-          return true;
-        } catch (e) {
-          console.error('Explicit login failed or was cancelled:', e);
-          commit('activateError', 'Login fehlgeschlagen.');
-          return false;
+        if (token) {
+          reloadTokenInterval = setInterval(async () => {
+            try {
+              const accessToken = await getValidAccessToken(fetch);
+              commit('setToken', accessToken);
+            } catch {
+              console.error('Failed to refresh token. User might need to re-login.');
+              commit('activateError', 'Sitzung abgelaufen. Bitte erneut anmelden.');
+            }
+          }, expiresIn);
         }
       },
 
@@ -166,12 +152,13 @@ export default function createStore(keycloakInstance: Keycloak.KeycloakInstance)
         clearInterval(reloadTokenInterval);
         reloadTokenInterval = undefined;
         commit('setToken', undefined);
-        commit('addCollections', []); // Clear collections on logout
+        commit('addCollections', []);
         apolloClient = new ApolloClient({
           link: httpLink,
           cache,
         });
-        await keycloakInstance.logout({ redirectUri: `${window.location.origin}/` });
+
+        deleteCookies();
       },
 
       async getCollections({ commit, getters }) {
