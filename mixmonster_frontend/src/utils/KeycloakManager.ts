@@ -45,7 +45,6 @@ function parserJwt(token: string): any | undefined {
 }
 
 function shouldRefreshToken(): boolean {
-  console.log('shouldRefreshToken');
   const exp = Cookies.get(AccessTokenExpiresAtKey);
   if (!exp) {
     return true;
@@ -91,7 +90,6 @@ export function setCookies(
     sameSite: 'lax',
     expires: new Date(new Date().getTime() + (expiresIn * 1000)),
   });
-  console.log('access set');
 
   Cookies.set(RefreshTokenKey, refreshToken, {
     path: '/',
@@ -100,7 +98,6 @@ export function setCookies(
     sameSite: 'lax',
     expires: new Date(new Date().getTime() + (refreshExpiresIn * 1000)),
   });
-  console.log('refresh set');
 
   // store token expiry for refresh logic
 
@@ -114,14 +111,12 @@ export function setCookies(
     sameSite: 'lax',
     expires: new Date(new Date().getTime() + (expiresIn * 1000)),
   });
-  console.log('expires set');
 }
 
 // refresh the access token if the refresh token is present
 async function refreshAccessToken(
   fetch: typeof globalThis.fetch,
 ): Promise<string | undefined> {
-  console.log('refreshAccessToken');
   const refreshToken = Cookies.get(RefreshTokenKey);
 
   if (!refreshToken) {
@@ -160,7 +155,6 @@ async function refreshAccessToken(
 export async function getValidAccessToken(
   fetch: typeof globalThis.fetch,
 ): Promise<string | undefined> {
-  console.log('getValidAccessToken');
   const accessToken = Cookies.get(AccessTokenKey);
 
   if (!accessToken) {
@@ -219,7 +213,6 @@ export async function exchangeToken(
     }
 
     const json = await response.json();
-    console.log(json);
     setCookies(json);
     return { token: json.access_token, expiresIn: json.expires_in };
   } catch (err) {
