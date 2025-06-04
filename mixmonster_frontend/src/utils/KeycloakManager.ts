@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import keycloakConfig from '@/configs/keycloak.json';
 // eslint-disable-next-line import/extensions,import/no-unresolved
 import { User } from '@/types/user';
+import { AccessTokenPayload } from '@/store';
 
 // You can optionally define an interface for type safety
 interface KeycloakConfig {
@@ -193,7 +194,7 @@ export async function exchangeToken(
   redirectUri: string,
   authCode: string,
   fetch: typeof globalThis.fetch,
-): Promise<string> {
+): Promise<AccessTokenPayload> {
   try {
     const endpoint = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`;
 
@@ -219,7 +220,7 @@ export async function exchangeToken(
     const json = await response.json();
     console.log(json);
     setCookies(json);
-    return json.access_token;
+    return { token: json.access_token, expiresIn: json.expires_in };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     throw Error(`500: ${message}`);

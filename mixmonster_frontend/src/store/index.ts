@@ -35,7 +35,7 @@ export interface RootState {
 
 Vue.use(Vuex);
 
-interface SetKeycloakPayload {
+export interface AccessTokenPayload {
   token: string | undefined;
   expiresIn: number;
 }
@@ -126,7 +126,7 @@ export default function createStore(): Store<RootState> {
       },
     },
     actions: {
-      async setKeycloakToken({ commit }, payload: SetKeycloakPayload) {
+      async setKeycloakToken({ commit }, payload: AccessTokenPayload) {
         const { token, expiresIn } = payload;
         commit('setToken', token);
 
@@ -162,6 +162,10 @@ export default function createStore(): Store<RootState> {
       },
 
       async getCollections({ commit, getters }) {
+        console.log(getters);
+        console.log(getters.isAuthenticated);
+        console.log(this.state.token);
+
         if (!getters.isAuthenticated) {
           commit('activateError', 'Nicht authentifiziert zum Abrufen von Sammlungen.');
           return;

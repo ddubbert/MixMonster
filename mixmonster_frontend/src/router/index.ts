@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import { Store } from 'vuex';
-import { RootState } from '@/store';
+import { AccessTokenPayload, RootState } from '@/store';
 import Home from '@/views/Home.vue';
 import { exchangeToken, getValidAccessToken, loginUrl } from '@/utils/KeycloakManager';
 
@@ -99,9 +99,8 @@ function createRouter(store: Store<RootState>): VueRouter {
           const redirectUri = window.location.origin + to.path;
           const { code } = to.query;
           if (code && typeof code === 'string') {
-            const token = await exchangeToken(redirectUri, code, fetch);
-            console.log(`exchanged token: ${token}`);
-            await store.dispatch('setKeycloakToken', token);
+            const tokenPayload: AccessTokenPayload = await exchangeToken(redirectUri, code, fetch);
+            await store.dispatch('setKeycloakToken', tokenPayload);
             next();
           } else {
             const url = loginUrl(redirectUri);
