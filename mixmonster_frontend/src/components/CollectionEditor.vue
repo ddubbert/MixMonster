@@ -572,7 +572,6 @@ export default class CollectionEditor extends EditorProps {
   }
 
   moveCriteriaDown(categoryIndex: number, criteriaIndex: number): void {
-    console.log(categoryIndex, criteriaIndex, this.criteriaPanels);
     const updated = this.criteriaPanels[categoryIndex].map((it) => {
       if (it === criteriaIndex + 1) return criteriaIndex;
       if (it === criteriaIndex) return criteriaIndex + 1;
@@ -589,7 +588,6 @@ export default class CollectionEditor extends EditorProps {
   }
 
   moveCriteriaUp(categoryIndex: number, criteriaIndex: number): void {
-    console.log(categoryIndex, criteriaIndex, this.criteriaPanels);
     const updated = this.criteriaPanels[categoryIndex].map((it) => {
       if (it === criteriaIndex - 1) return criteriaIndex;
       if (it === criteriaIndex) return criteriaIndex - 1;

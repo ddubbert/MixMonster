@@ -97,11 +97,11 @@ function createRouter(store: Store<RootState>): VueRouter {
         next();
       } else {
         try {
-          console.log(`Authenticating for protected route: ${to.fullPath}`);
           const redirectUri = window.location.origin + to.path;
           const { code } = to.query;
           if (code && typeof code === 'string') {
             const tokenPayload: AccessTokenPayload = await exchangeToken(redirectUri, code, fetch);
+            tokenPayload.expiresIn *= 1000;
             await store.dispatch('setKeycloakToken', tokenPayload);
             next();
           } else {
@@ -109,7 +109,6 @@ function createRouter(store: Store<RootState>): VueRouter {
             window.location.href = url;
           }
         } catch (e) {
-          console.error('Authentication failed during navigation guard:', e);
           store.dispatch('activateError', 'Login für diese Seite erforderlich oder fehlgeschlagen.');
           next({ name: 'Home' });
         }
