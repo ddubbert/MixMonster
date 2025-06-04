@@ -100,6 +100,7 @@ function createRouter(store: Store<RootState>): VueRouter {
           const { code } = to.query;
           if (code && typeof code === 'string') {
             const token = await exchangeToken(redirectUri, code, fetch);
+            console.log(`exchanged token: ${token}`);
             await store.dispatch('setKeycloakToken', token);
             next();
           } else {
