@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import { Store } from 'vuex';
-import { AccessTokenPayload, RootState } from '@/store';
+import { RootState } from '@/store';
 import Home from '@/views/Home.vue';
 import { exchangeToken, getValidAccessToken, loginUrl } from '@/utils/KeycloakManager';
+// eslint-disable-next-line import/extensions,import/no-unresolved
+import { AccessTokenPayload } from '@/types/accessTokenPayload';
 
 Vue.use(VueRouter);
 
