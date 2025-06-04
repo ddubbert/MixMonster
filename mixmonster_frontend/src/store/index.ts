@@ -20,6 +20,8 @@ import {
   UpdateCollectionMutationVariables,
 } from '@/types/generated/graphql';
 import { deleteCookies, getValidAccessToken } from '@/utils/KeycloakManager';
+// eslint-disable-next-line import/extensions,import/no-unresolved
+import { AccessTokenPayload } from '@/types/accessTokenPayload';
 
 let reloadTokenInterval: number | undefined;
 let apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -34,11 +36,6 @@ export interface RootState {
 }
 
 Vue.use(Vuex);
-
-export interface AccessTokenPayload {
-  token: string | undefined;
-  expiresIn: number;
-}
 
 export default function createStore(): Store<RootState> {
   const httpLink = createHttpLink({

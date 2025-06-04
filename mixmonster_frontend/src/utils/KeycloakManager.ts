@@ -8,7 +8,8 @@ import Cookies from 'js-cookie';
 import keycloakConfig from '@/configs/keycloak.json';
 // eslint-disable-next-line import/extensions,import/no-unresolved
 import { User } from '@/types/user';
-import { AccessTokenPayload } from '@/store';
+// eslint-disable-next-line import/extensions,import/no-unresolved
+import { AccessTokenPayload } from '@/types/accessTokenPayload';
 
 // You can optionally define an interface for type safety
 interface KeycloakConfig {
