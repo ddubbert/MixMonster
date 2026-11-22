@@ -1,14 +1,14 @@
 # MixMonster
 
 MixMonster is a small web tool for designing creative teaching and learning
-settings. Teachers build a *collection*: a set of categories (for example
-target group, medium, method, constraint), each with a list of criteria.
+settings. Teachers build a *collection*: a set of categories, each with a
+list of criteria.
 When the collection is used, the tool draws one criterion per category at
 random and combines them into a "MixMonster", an unexpected scenario that a
 group then works with.
 
-The tool was built in 2021–2022 as a prototype in the HybridLR project
-("hybrid learning spaces") at TH Köln. The user interface is in German.
+The tool was built in 2021–2022 as a prototype in the HybridLR project at
+TH Köln. The user interface is in German.
 
 ## Features
 
