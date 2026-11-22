@@ -10,7 +10,7 @@ export async function connectDB(): Promise<DB> {
   const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE, DB_AUTHSOURCE } = process.env;
 
   if (DB_USER && DB_PASSWORD) {
-    console.log(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?authSource=${DB_AUTHSOURCE}`);
+    console.log(`Connecting to MongoDB at ${DB_HOST}:${DB_PORT}/${DB_DATABASE}`);
     await connect(`mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?authSource=${DB_AUTHSOURCE}`);
   } else {
     await connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`);

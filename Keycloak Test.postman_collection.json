@@ -279,7 +279,6 @@
 					"var scope           = pm.collectionVariables.get(\"scope\");",
 					"",
 					"console.log(client_id);",
-					"console.log(client_secret);",
 					"console.log(token_endpoint);",
 					"console.log(scope);",
 					"",
