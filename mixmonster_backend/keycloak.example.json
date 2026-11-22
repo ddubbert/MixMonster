@@ -1,0 +1,12 @@
+{
+  "realm": "HybridLR",
+  "auth-server-url": "https://auth.gm.fh-koeln.de:8444/auth/",
+  "ssl-required": "external",
+  "resource": "mixmonster",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "<keycloak_client_secret>"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}
