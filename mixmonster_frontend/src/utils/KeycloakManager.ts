@@ -168,6 +168,17 @@ export async function getValidAccessToken(
   return accessToken;
 }
 
+// milliseconds until the stored access token expires (fallback: one minute)
+export function getAccessTokenExpiresIn(): number {
+  const fallback = 60 * 1000;
+  const exp = Cookies.get(AccessTokenExpiresAtKey);
+  if (!exp) {
+    return fallback;
+  }
+  const expiresIn = Date.parse(decodeURIComponent(exp)) - Date.now();
+  return Number.isNaN(expiresIn) || expiresIn <= 0 ? fallback : expiresIn;
+}
+
 export function deleteCookies() {
   Cookies.remove(AccessTokenKey, { path: '/' });
   Cookies.remove(AccessTokenExpiresAtKey, { path: '/' });
