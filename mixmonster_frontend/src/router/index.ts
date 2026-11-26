@@ -3,7 +3,9 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import { Store } from 'vuex';
 import { RootState } from '@/store';
 import Home from '@/views/Home.vue';
-import { exchangeToken, getValidAccessToken, loginUrl } from '@/utils/KeycloakManager';
+import {
+  exchangeToken, getAccessTokenExpiresIn, getValidAccessToken, loginUrl,
+} from '@/utils/KeycloakManager';
 // eslint-disable-next-line import/extensions,import/no-unresolved
 import { AccessTokenPayload } from '@/types/accessTokenPayload';
 
@@ -93,7 +95,11 @@ function createRouter(store: Store<RootState>): VueRouter {
     if (requiresAuth) {
       const accessToken = await getValidAccessToken(fetch);
       if (accessToken) {
-        await store.dispatch('setKeycloakToken', accessToken);
+        const tokenPayload: AccessTokenPayload = {
+          token: accessToken,
+          expiresIn: getAccessTokenExpiresIn(),
+        };
+        await store.dispatch('setKeycloakToken', tokenPayload);
         next();
       } else {
         try {
